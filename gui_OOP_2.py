@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import subprocess
+# import treading
 import concurrent.futures
 import platform
 import openpyxl
@@ -15,6 +16,7 @@ BLACK2 = '#404040'
 RED = '#c00002'
 GREEN = '#82c829'
 WHITE = '#FFFFFF'
+GREY = '#5a5956'
 
 # files name
 xl_file = "input.xlsx"
@@ -24,8 +26,8 @@ WIDTH = 900
 HEIGHT = 600
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
 
-right_WIDTH = 300
-right_HEIGHT = 500
+right_WIDTH = 400
+right_HEIGHT = 600
 
 SERVER_FRAME_WIDTH = 280
 SERVER_FRAME_HEIGHT = 120
@@ -76,7 +78,7 @@ def update_GUI(button, color, time, ip):
 
 def send_ping(current_ip_address):
     try:
-        output = subprocess.check_output("ping -{} 1 {}".format('n' if platform.system().lower(
+        output = subprocess.check_output("ping -{} 1 {} -w 100ms".format('n' if platform.system().lower(
         ) == "windows" else 'c', current_ip_address), shell=True, universal_newlines=True)
         if 'unreachable' in output:
             return False
@@ -91,20 +93,36 @@ def get_date():
 
     return date_time
 
-def add_frame(frame_to_add_to, title_name, array_of_machines, ip_list, place, sheet):
-    frame = tk.Frame(frame_to_add_to, bg=BLACK2, width=TAKASH_WIDTH, height=TAKASH_HEIGHT)
-    frame.grid(row=0, column=place, padx=5, pady=5)
-    # frame.pack(side=tk.LEFT, padx=5, pady=5)
+def add_frame(frame_to_add_to, title_name, array_of_machines, place, sheet, is_carriage):
+    if is_carriage:
+        padding_x = 0
+        label_wraplength = 30
+        label_background = GREY
+        button_font = 'Helvetica 6 bold'
+        row_place = 0
+        column_place = place
 
-    name_label = tk.Label(frame, text=title_name, bg=BLACK2, fg=WHITE, font='Helvetica 10 bold')
-    name_label.grid(row=0, column=0, sticky=tk.EW)
+    else:
+        padding_x = 5
+        label_wraplength = 0
+        label_background = BLACK2
+        button_font = 'Helvetica 8 bold'
+        row_place =int(place/3)
+        column_place =int(place%3)
+
+    frame = tk.Frame(frame_to_add_to, bg=BLACK1, width=TAKASH_WIDTH, height=300)
+    frame.grid(row=row_place, column=column_place, padx=padding_x, pady=2, sticky=tk.N)
+
+    name_label = tk.Label(frame, text=title_name,bd=2, bg=label_background,wraplength=label_wraplength, height = 2,fg=WHITE, font='Helvetica 8 bold')
+    name_label.grid(row=0, column=0, sticky=tk.NSEW)
     for index, machine in enumerate(array_of_machines):
         if machine.is_working == "עובד":
             background_button_color = GREEN
         else:
             background_button_color = RED
+
         button = tk.Button(frame, text=machine.who_am_i, bg=background_button_color,
-                           fg=WHITE, font='Helvetica 8 bold')
+                        fg=WHITE, font=button_font)
 
         button.configure(command=lambda v=machine.ip,b = button, s =sheet,h = machine.hostname : send_one_ping(v,b,s,h))
         button.grid(row=index + 1, column=0, sticky=tk.EW)
@@ -120,35 +138,40 @@ def add_data_to_Takash():
             last_takash_name = tuple[0]
         all_takash[tuple[0]].add_machine(tuple[1])
 
-def insert_data_to_ui(frame, sheet):
+def insert_data_to_ui(frame, sheet, is_carriage):
     # first insert the right side of the UI
     path = xl_file
 
     is_first_time = True
     dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
 
+    print("send ping to all of the takashes ip address and save data in xl file at: " + path + "at sheet: " + sheet)
     '''send ping to all of the takashes ip address and save data in xl file'''
     scanning_all(dict_of_machines_in_sheet,sheet)
-
+    '''--------------------------------------------'''
     is_first_time = False
+
+    print("start fetching data from file: " + path + "at sheet: " + sheet)
     dict_of_takashes, dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
 
     temp_machine_name_list = []
-    temp_ip_list = []
+    if is_carriage==False:
+        # print(len(dict_of_takashes.keys()))
+        if len(dict_of_takashes.keys())>9:
+            print("לא יכולים להיות יותר מ 9 תק''שים")
+            return False
 
     place = 0
     for key in dict_of_takashes:
         for machine in dict_of_takashes[key].machine_list:
             temp_machine_name_list.append(machine)
-            temp_ip_list.append(machine.ip)
-        '''add_frame(frame_to_add_to, title_name, array_of_machines, takash_ip, place)'''
-        add_frame(frame, key, temp_machine_name_list, temp_ip_list, place, sheet)
+
+        add_frame(frame, key, temp_machine_name_list, place, sheet, is_carriage)
         place = place + 1
         temp_machine_name_list = []
-        temp_ip_list = []
+    return True
 
 def get_data_from_file(path, sheet, first_time_flag):
-    print("start fetching data from file: " + path + "at sheet: " + sheet)
 
     # To open the workbook, workbook object is created
     workbook_obj = openpyxl.load_workbook(path)
@@ -235,16 +258,16 @@ class Program(tk.Tk):
         self.carriage_frame.pack()
 
     def get_headquarters_name(self):  ### temp for now
-        return ("bla bla 36")
+
+        workbook_obj = openpyxl.load_workbook(xl_file)
+        sheet_obj = workbook_obj["שרתים"]
+
+        current_takash = sheet_obj.cell(row=1, column=8).value
+        return (current_takash)
 
 class Servers_frame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BLACK2)
-
-        # innerFrame = tk.Frame(self, bg=RED, width=right_WIDTH, height=SERVER_FRAME_HEIGHT)
-        # innerFrame.grid(row=0, column=0)
-        # name = tk.Label(innerFrame, text = "red", bg=RED)
-        # name.grid(row=0,column=0, sticky="nsew")
 
 class Top_title(tk.Frame):
     def __init__(self, parent, title, need_buttons):
@@ -370,12 +393,20 @@ def update_file(sheet_obj, hostname, status, time):
 if __name__ == '__main__':
     app = Program()
     # app.geometry("500x400")
+    x = insert_data_to_ui(app.server_frame, "שרתים", False)
+    y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
 
-    insert_data_to_ui(app.server_frame, "servers")
-    # insert_data_to_ui(app.takash_frame, "mapping")
-    # insert_data_to_ui(app.carriage_frame, "קרונות")
+    z = insert_data_to_ui(app.carriage_frame,"קרונות", True)
 
-    # carriage_frame = tk.Frame(app.server_frame, bg=GREEN, width=100, height=100)
-    # carriage_frame.grid(row=0, column=0)
+    # x=4
+    # z=4
+    if x==False or y == False or z == False:
+        print("error")
+        exit(1)
+
+    # y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
+
+
+
 
     app.mainloop()
