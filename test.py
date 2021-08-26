@@ -230,6 +230,7 @@ class Program(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         self.run_counter = 0
+        self.update_state = 0
         self.container = tk.Frame(self, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
         self.container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
         self.container.pack_propagate(0)
@@ -244,6 +245,18 @@ class Program(tk.Tk):
 
         self.server_frame = Servers_frame(self.container, self)
         self.server_frame.pack()
+
+        span = tk.Frame(self.container, bg=BLACK1, height=2)
+        span.pack(fill=tk.X, pady=5, padx=10)
+
+        self.takash_frame = Servers_frame(self.container, self)
+        self.takash_frame.pack()
+
+        span = tk.Frame(self.container, bg=BLACK1, height=2)
+        span.pack(fill=tk.X, pady=5, padx=10)
+
+        self.carriage_frame = Servers_frame(self.container, self)
+        self.carriage_frame.pack()
         self.label_counter =tk.Label(self.container, text= self.run_counter, bg=BLACK2, fg=WHITE, font='Helvetica 18 bold')
         self.label_counter.pack()
 
@@ -256,11 +269,36 @@ class Program(tk.Tk):
         return (current_takash)
 
     def update_data_in_ui(self):
-      x = insert_data_to_ui(app.server_frame, "שרתים", False)
-      self.run_counter += 1
-      self.label_counter.configure(text=self.run_counter)
-      self.top_frame.title_top.configure(text="david")
-      self.after(5000, self.update_data_in_ui)
+      update_state_place_name = "לקראת עדכון"
+      self.label_counter.configure(text=update_state_place_name)
+      if   self.update_state == 0:
+        self.update_state = 1
+        self.after(5000, self.update_server_frame_in_ui)
+
+    def update_server_frame_in_ui(self):
+        update_state_place_name = "מעדכן אזור שרתים"
+        self.label_counter.configure(text=update_state_place_name)
+        x = insert_data_to_ui(app.server_frame, "שרתים", False)
+        if self.update_state == 1:
+            self.update_state = 2
+            self.after(5000, self.update_takash_frame_in_ui)
+
+    def update_takash_frame_in_ui(self):
+        update_state_place_name = "מעדכן אזור תאי קשר"
+        self.label_counter.configure(text=update_state_place_name)
+        y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
+        if self.update_state == 2:
+            self.update_state = 3
+            self.after(5000, self.update_carriage_frame_in_ui)
+
+    def update_carriage_frame_in_ui(self):
+        update_state_place_name = "מעדכן אזור קרונות"
+        self.label_counter.configure(text=update_state_place_name)
+        z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
+        if self.update_state == 3:
+            self.update_state = 0
+            self.after(5000, self.update_data_in_ui)
+
 
 class Servers_frame(tk.Frame):
     def __init__(self, parent, controller):
@@ -391,6 +429,9 @@ if __name__ == '__main__':
     app = Program()
 
     x = insert_data_to_ui(app.server_frame, "שרתים", False)
+    y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
+
+    z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
     app.update_data_in_ui()
 
     app.mainloop()

@@ -27,7 +27,7 @@ HEIGHT = 600
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
 
 right_WIDTH = 400
-right_HEIGHT = 600
+right_HEIGHT = 840
 
 SERVER_FRAME_WIDTH = 280
 SERVER_FRAME_HEIGHT = 120
@@ -37,9 +37,6 @@ TAKASH_FRAME_HEIGHT = 240
 
 TAKASH_WIDTH = 80
 TAKASH_HEIGHT = 150
-
-# def change_color(frame, color):
-#     frame.
 
 # def flickering_color(button, color):
 #     for i in range(0,2):
@@ -78,7 +75,7 @@ def update_GUI(button, color, time, ip):
 
 def send_ping(current_ip_address):
     try:
-        output = subprocess.check_output("ping -{} 1 {} -w 100ms".format('n' if platform.system().lower(
+        output = subprocess.check_output("ping -{} 1 {} -w 200ms".format('n' if platform.system().lower(
         ) == "windows" else 'c', current_ip_address), shell=True, universal_newlines=True)
         if 'unreachable' in output:
             return False
@@ -124,7 +121,7 @@ def add_frame(frame_to_add_to, title_name, array_of_machines, place, sheet, is_c
         button = tk.Button(frame, text=machine.who_am_i, bg=background_button_color,
                         fg=WHITE, font=button_font)
 
-        button.configure(command=lambda v=machine.ip,b = button, s =sheet,h = machine.hostname : send_one_ping(v,b,s,h))
+        button.configure(command=lambda ip=machine.ip,b = button, s =sheet,h = machine.hostname : send_one_ping(ip,b,s,h))
         button.grid(row=index + 1, column=0, sticky=tk.EW)
 
         text_to_add = 'ip: ' + str(machine.ip + "\n" + 'last time: '+ machine.last_send_time)
@@ -230,9 +227,11 @@ class Program(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
+        self.update_state = 0
         self.container = tk.Frame(self, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
         self.container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
         self.container.pack_propagate(0)
+
         # self.container.grid_rowconfigure(0, weight=1)
         # self.container.grid_columnconfigure(0, weight=1)
         self.create_right_side()
@@ -265,6 +264,37 @@ class Program(tk.Tk):
         current_takash = sheet_obj.cell(row=1, column=8).value
         return (current_takash)
 
+    def update_data_in_ui(self):
+      update_state_place_name = "לקראת עדכון אזור שרתים"
+      self.top_frame.update_state_label.configure(text=update_state_place_name)
+      if   self.update_state == 0:
+        self.update_state = 1
+        self.after(5000, self.update_server_frame_in_ui)
+
+    def update_server_frame_in_ui(self):
+        update_state_place_name = "לקראת עדכון אזור תאי קשר"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        x = insert_data_to_ui(app.server_frame, "שרתים", False)
+        if self.update_state == 1:
+            self.update_state = 2
+            self.after(5000, self.update_takash_frame_in_ui)
+
+    def update_takash_frame_in_ui(self):
+        update_state_place_name = "לקראת עדכון אזור קרונות"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
+        if self.update_state == 2:
+            self.update_state = 3
+            self.after(5000, self.update_carriage_frame_in_ui)
+
+    def update_carriage_frame_in_ui(self):
+        update_state_place_name = "לקראת עדכון"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
+        if self.update_state == 3:
+            self.update_state = 0
+            self.after(5000, self.update_data_in_ui)
+
 class Servers_frame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=BLACK2)
@@ -272,7 +302,7 @@ class Servers_frame(tk.Frame):
 class Top_title(tk.Frame):
     def __init__(self, parent, title, need_buttons):
         tk.Frame.__init__(self, parent, bg=BLACK2)
-
+        self.update_state = 0
         self.upper_frame = tk.Frame(self, bg=BLACK2)
         self.upper_frame.pack(fill=tk.X)
 
@@ -286,6 +316,9 @@ class Top_title(tk.Frame):
 
         self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font='Helvetica 18 bold')
         self.title_top.grid(row=0, column=1, rowspan=2)
+        self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
+                                      font='Helvetica 10 bold', width=18)
+        self.update_state_label.grid(row=0, column=2, rowspan=2)
         self.upper_frame.grid_rowconfigure(1, weight=1)
         self.upper_frame.grid_columnconfigure(1, weight=1)
 
@@ -392,19 +425,12 @@ def update_file(sheet_obj, hostname, status, time):
 
 if __name__ == '__main__':
     app = Program()
-    # app.geometry("500x400")
+
     x = insert_data_to_ui(app.server_frame, "שרתים", False)
     y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
 
-    z = insert_data_to_ui(app.carriage_frame,"קרונות", True)
-
-    # x=4
-    # z=4
-    if x==False or y == False or z == False:
-        print("error")
-        exit(1)
-
-    # y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
+    z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
+    app.update_data_in_ui()
 
 
 
