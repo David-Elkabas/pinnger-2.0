@@ -45,6 +45,40 @@ TAKASH_HEIGHT = 150
 #         button.configure(bg=GREEN)
 #         time.sleep(0.1)
 
+class NewWindow(tk.Toplevel):
+
+    def __init__(self, master=None):
+        super().__init__(master=master)
+        self.title("New Window")
+        self.big_frame = tk.Frame(self, bg=BLACK2)
+        self.big_frame.pack()
+        # set minimum window size value
+        self.minsize(250, 180)
+        # set maximum window size value
+        self.maxsize(250, 180)
+        padding_left= tk.Label(self.big_frame, font='Helvetica 12 bold', text=" לא עובד בנתיים", bg=BLACK2, fg="red")
+        padding_left.grid(row = 0, column= 0, sticky=tk.W)
+        title_label = tk.Label(self.big_frame, bg=BLACK2, font='Helvetica 10 bold', text="אנא בחר את קצב שליחת" + "\n"+ "הפינג ואת זמן הסריקה")
+        title_label.grid(row = 0, column= 1, sticky=tk.E, columnspan = 2, pady= 20)
+
+        entry_ping = tk.Entry(self.big_frame,  width=11)
+        entry_ping.grid(row=1, column=0, sticky=tk.E)
+        ping_label= tk.Label(self.big_frame, text=":קצב שליחת פינג", width=12, bg=BLACK2, font='Helvetica 10 bold')
+        ping_label.grid(row = 1, column= 1, sticky=tk.E, columnspan = 2)
+
+        entry_scan = tk.Entry(self.big_frame,  width=11)
+        entry_scan.grid(row=2, column=0, sticky=tk.E)
+        scan_time_label = tk.Label(self.big_frame, text=":קצב סריקה",font='Helvetica 10 bold', width=12, bg=BLACK2)
+        scan_time_label.grid(row = 2, column= 1, sticky=tk.E, columnspan = 2)
+
+        ok_button = tk.Button(self.big_frame, text="אישור", bg=BLACK1, fg=WHITE,
+                              font='Helvetica 8 bold', width=10)
+        ok_button.grid(row=3, column=0, sticky=tk.W, padx=15, pady=20)
+
+        cancel_button = tk.Button(self.big_frame, text="ביטול", bg=BLACK1, fg=WHITE,
+                              font='Helvetica 8 bold', width=10)
+        cancel_button.grid(row=3, column=1, sticky=tk.W, padx=10, pady=20)
+
 def send_one_ping(takash_ip, button, sheet, hostname):
     response = send_ping(takash_ip)
     print(takash_ip)
@@ -75,7 +109,7 @@ def update_GUI(button, color, time, ip):
 
 def send_ping(current_ip_address):
     try:
-        output = subprocess.check_output("ping -{} 1 {} -w 200ms".format('n' if platform.system().lower(
+        output = subprocess.check_output("ping -{} 1 {} -w 250ms".format('n' if platform.system().lower(
         ) == "windows" else 'c', current_ip_address), shell=True, universal_newlines=True)
         if 'unreachable' in output:
             return False
@@ -309,6 +343,8 @@ class Top_title(tk.Frame):
         if need_buttons == True:
             self.setting_button = tk.Button(self.upper_frame, text=" הגדרות", bg=BLACK1, fg=WHITE,
                                             font='Helvetica 8 bold', width=6)
+            self.setting_button.bind("<Button>",
+                     lambda e: NewWindow(parent))
             self.setting_button.grid(row=0, column=0, sticky=tk.W, padx=5)
             self.statistics_button = tk.Button(self.upper_frame, text="סטיסטיקה", bg=BLACK1, fg=WHITE,
                                                font='Helvetica 8 bold', width=6)
