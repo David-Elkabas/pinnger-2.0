@@ -8,7 +8,11 @@ import openpyxl
 from Classes import Machine
 from Classes import Takash
 from datetime import datetime
+import winsound
 import time
+
+'''change MORE_data to True if you wish to add additional data from 'more' sheet'''
+MORE_DATA = True
 
 # colors:
 BLACK1 = '#252525'
@@ -23,7 +27,7 @@ xl_file = "input.xlsx"
 
 # measures
 WIDTH = 900
-HEIGHT = 600
+HEIGHT = 700
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
 
 right_WIDTH = 400
@@ -124,7 +128,7 @@ def get_date():
 
     return date_time
 
-def add_frame(frame_to_add_to, title_name, array_of_machines, place, sheet, is_carriage):
+def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, sheet, is_carriage):
     if is_carriage:
         padding_x = 0
         label_wraplength = 30
@@ -176,13 +180,23 @@ def insert_data_to_ui(frame, sheet, is_carriage):
     is_first_time = True
     dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
 
-    print("send ping to all of the takashes ip address and save data in xl file at: " + path + "at sheet: " + sheet)
+    if sheet == 'שרתים':
+        sheet_print = "servers"
+    if sheet == 'תא קשר':
+        sheet_print = "takash"
+    if sheet == 'קרונות':
+        sheet_print = "carriages"
+    if sheet == 'לבדוק בנוסף':
+        sheet_print = "more data"
+
+    print("send ping to all of the takashes ip address and save data in xl file at: " + path + "at sheet: " + sheet_print)
     '''send ping to all of the takashes ip address and save data in xl file'''
     scanning_all(dict_of_machines_in_sheet,sheet)
-    '''--------------------------------------------'''
+
+    '''- - - -  - - -  - - -  - - - -  - - - -  - - - - - - - - - - -  - - -  - - - -'''
     is_first_time = False
 
-    print("start fetching data from file: " + path + "at sheet: " + sheet)
+    print("start fetching data from file: " + path + "at sheet: " + sheet_print)
     dict_of_takashes, dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
 
     temp_machine_name_list = []
@@ -197,7 +211,7 @@ def insert_data_to_ui(frame, sheet, is_carriage):
         for machine in dict_of_takashes[key].machine_list:
             temp_machine_name_list.append(machine)
 
-        add_frame(frame, key, temp_machine_name_list, place, sheet, is_carriage)
+        add_frame_to_ui(frame, key, temp_machine_name_list, place, sheet, is_carriage)
         place = place + 1
         temp_machine_name_list = []
     return True
@@ -262,32 +276,57 @@ class Program(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.update_state = 0
-        self.container = tk.Frame(self, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
-        self.container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
-        self.container.pack_propagate(0)
+        if MORE_DATA == True:
+            w = WIDTH
+            h = HEIGHT
+        else:
+            w = right_WIDTH
+            h = right_HEIGHT
+        self.main_container = tk.Frame(self, bg=BLACK2, width= w , height= h )
+        self.main_container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
+        self.main_container.pack_propagate(0)
 
+        self.right_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
+        self.right_container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
+        self.right_container.pack_propagate(0)
+
+        self.create_right_side()
+
+        if MORE_DATA == True:
+            self.left_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
+            self.left_container.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
+            self.left_container.pack_propagate(0)
+            self.create_left_side()
         # self.container.grid_rowconfigure(0, weight=1)
         # self.container.grid_columnconfigure(0, weight=1)
-        self.create_right_side()
+
+
+    def create_left_side(self):
+        self.headquarters_name_left = "כלים נוספים לבדיקה"
+        self.top_frame_left = Top_title(self.left_container, self.headquarters_name_left, False)
+        self.top_frame_left.pack(fill=tk.X)
+
+        self.additional_frame = Servers_frame(self.left_container, self)
+        self.additional_frame.pack()
 
     def create_right_side(self):
         self.headquarters_name = self.get_headquarters_name()
-        self.top_frame = Top_title(self.container, self.headquarters_name, True)
+        self.top_frame = Top_title(self.right_container, self.headquarters_name, True)
         self.top_frame.pack(fill=tk.X)
 
-        self.server_frame = Servers_frame(self.container, self)
+        self.server_frame = Servers_frame(self.right_container, self)
         self.server_frame.pack()
 
-        span = tk.Frame(self.container, bg=BLACK1, height=2)
+        span = tk.Frame(self.right_container, bg=BLACK1, height=2)
         span.pack(fill=tk.X, pady=5, padx=10)
 
-        self.takash_frame = Servers_frame(self.container, self)
+        self.takash_frame = Servers_frame(self.right_container, self)
         self.takash_frame.pack()
 
-        span = tk.Frame(self.container, bg=BLACK1, height=2)
+        span = tk.Frame(self.right_container, bg=BLACK1, height=2)
         span.pack(fill=tk.X, pady=5, padx=10)
 
-        self.carriage_frame = Servers_frame(self.container, self)
+        self.carriage_frame = Servers_frame(self.right_container, self)
         self.carriage_frame.pack()
 
     def get_headquarters_name(self):  ### temp for now
@@ -352,9 +391,10 @@ class Top_title(tk.Frame):
 
         self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font='Helvetica 18 bold')
         self.title_top.grid(row=0, column=1, rowspan=2)
-        self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
-                                      font='Helvetica 10 bold', width=18)
-        self.update_state_label.grid(row=0, column=2, rowspan=2)
+        if need_buttons:
+            self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
+                                          font='Helvetica 10 bold', width=18)
+            self.update_state_label.grid(row=0, column=2, rowspan=2)
         self.upper_frame.grid_rowconfigure(1, weight=1)
         self.upper_frame.grid_columnconfigure(1, weight=1)
 
@@ -464,11 +504,12 @@ if __name__ == '__main__':
 
     x = insert_data_to_ui(app.server_frame, "שרתים", False)
     y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
-
     z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
+
+
+    '''open another place for optional data'''
+    if MORE_DATA == True:
+        w = insert_data_to_ui(app.additional_frame, "לבדוק בנוסף", False)
+
     app.update_data_in_ui()
-
-
-
-
     app.mainloop()
