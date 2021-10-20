@@ -1,0 +1,32 @@
+{
+  "name": "אוגדה 12341",
+  "servers": [
+    {
+      "name": "תקש שרתים 188",
+      "devices": [
+        {
+          "hostname": "ZN1",
+          "machine_type": "עמדת CCT",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN2",
+          "machine_type": "שרת רדיו CCU",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN2",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {}
+  ]
+}

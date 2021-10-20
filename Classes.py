@@ -5,6 +5,8 @@ class Machine:
         self.who_am_i = who_am_i
         self.last_send_time = last_send_time
         self.is_working = is_working
+        # self.three_last_status = three_last_status
+
 
 
 class Takash:

@@ -27,11 +27,11 @@ xl_file = "input.xlsx"
 
 # measures
 WIDTH = 900
-HEIGHT = 700
+HEIGHT = 840
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
 
 right_WIDTH = 400
-right_HEIGHT = 840
+right_HEIGHT = HEIGHT
 
 SERVER_FRAME_WIDTH = 280
 SERVER_FRAME_HEIGHT = 120
@@ -173,37 +173,47 @@ def add_data_to_Takash():
             last_takash_name = tuple[0]
         all_takash[tuple[0]].add_machine(tuple[1])
 
+def HE_to_EN_sheet_name(name):
+    if name == 'שרתים':
+        return('servers')
+    if name == 'תא קשר':
+        return('takash')
+    if name == 'קרונות':
+        return('carriages')
+    if name == 'לבדוק בנוסף':
+        return('more data')
+
+def print_status_to_cmd(commend, path= "input.xlsx" , sheet_name = '' ):
+    if commend =='update':
+        print("send ping to all of the takashes ip address and save data in xl file at: " + path + " at sheet: " + sheet_name + "\n")
+    elif commend == 'fetch':
+        print("start fetching data from file: " + path + "at sheet: " + sheet_name + "\n")
+    elif commend == 'save':
+        print("saved all new data to " + path)
+
+
 def insert_data_to_ui(frame, sheet, is_carriage):
-    # first insert the right side of the UI
+
     path = xl_file
 
     is_first_time = True
     dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
 
-    if sheet == 'שרתים':
-        sheet_print = "servers"
-    if sheet == 'תא קשר':
-        sheet_print = "takash"
-    if sheet == 'קרונות':
-        sheet_print = "carriages"
-    if sheet == 'לבדוק בנוסף':
-        sheet_print = "more data"
+    sheet_name = HE_to_EN_sheet_name(sheet)
 
-    print("send ping to all of the takashes ip address and save data in xl file at: " + path + "at sheet: " + sheet_print)
+    print_status_to_cmd('update',path,sheet_name)
+
     '''send ping to all of the takashes ip address and save data in xl file'''
     scanning_all(dict_of_machines_in_sheet,sheet)
 
-    '''- - - -  - - -  - - -  - - - -  - - - -  - - - - - - - - - - -  - - -  - - - -'''
+    print_status_to_cmd('fetch',path,sheet_name)
     is_first_time = False
-
-    print("start fetching data from file: " + path + "at sheet: " + sheet_print)
     dict_of_takashes, dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
-
     temp_machine_name_list = []
+
     if is_carriage==False:
-        # print(len(dict_of_takashes.keys()))
         if len(dict_of_takashes.keys())>9:
-            print("לא יכולים להיות יותר מ 9 תק''שים")
+            print("cant be more than 9 TAKASHIM")
             return False
 
     place = 0
@@ -231,7 +241,7 @@ def get_data_from_file(path, sheet, first_time_flag):
     machines_to_add = 0
     exit_loop_flag = False
     current_row = []
-    for row in sheet_obj.iter_rows(min_row=2):
+    for row in sheet_obj.iter_rows(min_row=2, max_col=6):
         if exit_loop_flag == True:
             break
         else:
@@ -241,7 +251,7 @@ def get_data_from_file(path, sheet, first_time_flag):
                     break
                 else:
                     if cell_count == 1:
-                        if cell.value == None:
+                        if cell.value == None or cell.value ==  'סוף':
                             exit_loop_flag = True
                         else:
                             name_of_takash = cell.value
@@ -253,6 +263,9 @@ def get_data_from_file(path, sheet, first_time_flag):
                     else:
                         current_row.append(cell.value)
                     cell_count += 1
+        '''after we pull out the data for the selected row we construct the Machine with all the data
+        using a dictionary with key=hostname that save all the machines'''
+        #Machine - (hostname, ip, who_am_i, last_send_time, is_working, three_last_status)
         dict_of_machines_in_sheet[current_row[2]] = Machine(current_row[2], current_row[1], current_row[0], current_row[4], current_row[3])
         takash_with_machine.append([name_of_takash, dict_of_machines_in_sheet[current_row[2]]])
     takash_with_machine.pop()
@@ -471,6 +484,7 @@ def scanning_all(dict_of_all_addresses, sheet):
     for key in dict_of_all_addresses:
         update_file(sheet_obj, key, dict_of_all_addresses[key].is_working, dict_of_all_addresses[key].last_send_time)
 
+    print_status_to_cmd('save')
     print("saved all new data to input_data.xlsx")
     workbook_obj.save(path)
 
@@ -510,6 +524,7 @@ if __name__ == '__main__':
     '''open another place for optional data'''
     if MORE_DATA == True:
         w = insert_data_to_ui(app.additional_frame, "לבדוק בנוסף", False)
+
 
     app.update_data_in_ui()
     app.mainloop()
