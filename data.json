@@ -1,12 +1,12 @@
 {
   "name": "אוגדה 12341",
-  "servers": [
+  "SERVERS": [
     {
       "name": "תקש שרתים 188",
       "devices": [
         {
           "hostname": "ZN1",
-          "machine_type": "עמדת CCT",
+          "machine_type": "עמדה משולבת",
           "ip": "8.8.8.8",
           "status": "",
           "last_update_date": ""
@@ -17,9 +17,275 @@
           "ip": "8.8.8.8",
           "status": "",
           "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש שרתים 999",
+      "devices": [
+        {
+          "hostname": "ZN3",
+          "machine_type": "עמדה משולבת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
         },
         {
-          "hostname": "ZN2",
+          "hostname": "ZN4",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    }
+  ],
+  "TAKASHIM": [
+    {
+      "name": "תקש מספר 1",
+      "devices": [
+        {
+          "hostname": "ZN5",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN6",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN7",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש מספר 2",
+      "devices": [
+        {
+          "hostname": "ZN8",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN9",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN10",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש מספר 3",
+      "devices": [
+        {
+          "hostname": "ZN11",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN12",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN13",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש מספר 4",
+      "devices": [
+        {
+          "hostname": "ZN14",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN15",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN16",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש מספר 5",
+      "devices": [
+        {
+          "hostname": "ZN17",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN18",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN19",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש מספר 6",
+      "devices": [
+        {
+          "hostname": "ZN20",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN21",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN22",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "תקש מספר 7",
+      "devices": [
+        {
+          "hostname": "ZN23",
+          "machine_type": "עמדה משולשת",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN24",
+          "machine_type": "ישלק 1",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN25",
+          "machine_type": "ישלק 2",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    }
+  ],
+  "CARRIAGE": [
+    {
+      "name": "קרון א",
+      "devices": [
+        {
+          "hostname": "ZN100",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN101",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN102",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN103",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN104",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN105",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN106",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN107",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN108",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
           "status": "",
@@ -27,6 +293,141 @@
         }
       ]
     },
-    {}
+    {
+      "name": "קרון ב",
+      "devices": [
+        {
+          "hostname": "ZN110",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN111",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN112",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN113",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN114",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN115",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN116",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN117",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN118",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    },
+    {
+      "name": "קרון א",
+      "devices": [
+        {
+          "hostname": "ZN120",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN121",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN122",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN123",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN124",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN125",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN126",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN127",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        },
+        {
+          "hostname": "ZN128",
+          "machine_type": "ידבר",
+          "ip": "8.8.8.8",
+          "status": "",
+          "last_update_date": ""
+        }
+      ]
+    }
   ]
 }

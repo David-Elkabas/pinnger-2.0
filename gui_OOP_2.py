@@ -185,9 +185,9 @@ def HE_to_EN_sheet_name(name):
 
 def print_status_to_cmd(commend, path= "input.xlsx" , sheet_name = '' ):
     if commend =='update':
-        print("send ping to all of the takashes ip address and save data in xl file at: " + path + " at sheet: " + sheet_name + "\n")
+        print("updating - send ping to all of the takashes ip address and save data in xl file: " + path + " at sheet: " + sheet_name )
     elif commend == 'fetch':
-        print("start fetching data from file: " + path + "at sheet: " + sheet_name + "\n")
+        print("fetching the new data from file: " + path + " at sheet: " + sheet_name + "\n")
     elif commend == 'save':
         print("saved all new data to " + path)
 
@@ -200,7 +200,6 @@ def insert_data_to_ui(frame, sheet, is_carriage):
     dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
 
     sheet_name = HE_to_EN_sheet_name(sheet)
-
     print_status_to_cmd('update',path,sheet_name)
 
     '''send ping to all of the takashes ip address and save data in xl file'''
@@ -485,7 +484,6 @@ def scanning_all(dict_of_all_addresses, sheet):
         update_file(sheet_obj, key, dict_of_all_addresses[key].is_working, dict_of_all_addresses[key].last_send_time)
 
     print_status_to_cmd('save')
-    print("saved all new data to input_data.xlsx")
     workbook_obj.save(path)
 
 def update_file(sheet_obj, hostname, status, time):
