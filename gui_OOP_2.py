@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import subprocess
+import json
 # import treading
 import concurrent.futures
 import platform
@@ -13,7 +14,7 @@ import time
 
 '''change MORE_data to True if you wish to add additional data from 'more' sheet'''
 MORE_DATA = True
-
+READ_FROM_JSON = False
 # colors:
 BLACK1 = '#252525'
 BLACK2 = '#404040'
@@ -23,7 +24,12 @@ WHITE = '#FFFFFF'
 GREY = '#5a5956'
 
 # files name
-xl_file = "input.xlsx"
+xl_file = "data.xlsx"
+json_file = "data.json"
+if READ_FROM_JSON:
+    read_from_file = json_file
+else:
+    read_from_file = xl_file
 
 # measures
 WIDTH = 900
@@ -41,6 +47,9 @@ TAKASH_FRAME_HEIGHT = 240
 
 TAKASH_WIDTH = 80
 TAKASH_HEIGHT = 150
+
+UPDATE_UI_TIME_MSEC = 5000
+SEND_PING_TIME_MSEC = 250
 
 # def flickering_color(button, color):
 #     for i in range(0,2):
@@ -83,6 +92,51 @@ class NewWindow(tk.Toplevel):
                               font='Helvetica 8 bold', width=10)
         cancel_button.grid(row=3, column=1, sticky=tk.W, padx=10, pady=20)
 
+class ToolTip(object):
+
+    def __init__(self, widget):
+        self.widget = widget
+        self.tipwindow = None
+        self.id = None
+        self.x = self.y = 0
+
+    def showtip(self, text):
+        "Display text in tooltip window"
+        self.text = text
+        if self.tipwindow or not self.text:
+            return
+        x, y, cx, cy = self.widget.bbox("insert")
+        x = x + self.widget.winfo_rootx() + 57
+        y = y + cy + self.widget.winfo_rooty() +27
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(1)
+        tw.wm_geometry("+%d+%d" % (x, y))
+        label = tk.Label(tw, text=self.text, justify=tk.LEFT,
+                      background="#ffffe0", relief=tk.SOLID, borderwidth=1,
+                      font=("tahoma", "8", "normal"))
+        label.pack(ipadx=1)
+
+    def hidetip(self):
+        tw = self.tipwindow
+        self.tipwindow = None
+        if tw:
+            tw.destroy()
+
+def Create_tool_tip(widget, text, need_delete):
+    # if need_delete:
+    #     toolTip.widget = None
+    #     toolTip.tipwindow = None
+    #     toolTip.id = None
+    #     toolTip.x = 0
+    #     toolTip.y = 0
+    toolTip = ToolTip(widget)
+    def enter(event):
+        toolTip.showtip(text)
+    def leave(event):
+        toolTip.hidetip()
+    widget.bind('<Enter>', enter)
+    widget.bind('<Leave>', leave)
+
 def send_one_ping(takash_ip, button, sheet, hostname):
     response = send_ping(takash_ip)
     print(takash_ip)
@@ -95,7 +149,7 @@ def send_one_ping(takash_ip, button, sheet, hostname):
         status = False
         color = RED
 
-    path = xl_file
+    path = read_from_file
     workbook_obj = openpyxl.load_workbook(path)
     sheet_obj = workbook_obj[sheet]
     time = get_date()
@@ -183,7 +237,7 @@ def HE_to_EN_sheet_name(name):
     if name == 'לבדוק בנוסף':
         return('more data')
 
-def print_status_to_cmd(commend, path= "input.xlsx" , sheet_name = '' ):
+def print_status_to_cmd(commend, path = "input.xlsx" , sheet_name = '' ):
     if commend =='update':
         print("updating - send ping to all of the takashes ip address and save data in xl file: " + path + " at sheet: " + sheet_name )
     elif commend == 'fetch':
@@ -191,15 +245,18 @@ def print_status_to_cmd(commend, path= "input.xlsx" , sheet_name = '' ):
     elif commend == 'save':
         print("saved all new data to " + path)
 
-
 def insert_data_to_ui(frame, sheet, is_carriage):
 
-    path = xl_file
-
-    is_first_time = True
-    dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
+    path = read_from_file
 
     sheet_name = HE_to_EN_sheet_name(sheet)
+    is_first_time = True
+    if READ_FROM_JSON:
+        dict_of_machines_in_sheet = get_data_from_json_file(path, sheet_name, is_first_time)
+        print("json")
+    else:
+        dict_of_machines_in_sheet = get_data_from_xl_file(path, sheet, is_first_time)
+
     print_status_to_cmd('update',path,sheet_name)
 
     '''send ping to all of the takashes ip address and save data in xl file'''
@@ -207,7 +264,7 @@ def insert_data_to_ui(frame, sheet, is_carriage):
 
     print_status_to_cmd('fetch',path,sheet_name)
     is_first_time = False
-    dict_of_takashes, dict_of_machines_in_sheet = get_data_from_file(path, sheet, is_first_time)
+    dict_of_takashes, dict_of_machines_in_sheet = get_data_from_xl_file(path, sheet, is_first_time)
     temp_machine_name_list = []
 
     if is_carriage==False:
@@ -225,7 +282,7 @@ def insert_data_to_ui(frame, sheet, is_carriage):
         temp_machine_name_list = []
     return True
 
-def get_data_from_file(path, sheet, first_time_flag):
+def get_data_from_xl_file(path, sheet, first_time_flag):
 
     # To open the workbook, workbook object is created
     workbook_obj = openpyxl.load_workbook(path)
@@ -282,6 +339,60 @@ def get_data_from_file(path, sheet, first_time_flag):
             all_takash[tuple[0]].add_machine(tuple[1])
 
         return all_takash, dict_of_machines_in_sheet
+
+# def get_data_from_json_file(path, sheet ,first_time_flag):
+#
+#     current_machine = 'ggg'  #קרון , שרת או תקש
+#     takash_with_machine = []  # tuple of (takash name, machine name)
+#
+#     dict_of_machines_in_sheet = {}
+#     all_takash = {}
+#     machines_to_add = 0
+#     current_row = []
+#     name_of_takash = ""
+#     for row in sheet_obj.iter_rows(min_row=2, max_col=6):
+#         if exit_loop_flag == True:
+#             break
+#         else:
+#             cell_count = 1
+#             for cell in row:
+#                 if exit_loop_flag == True:
+#                     break
+#                 else:
+#                     if cell_count == 1:
+#                         if cell.value == None or cell.value == 'סוף':
+#                             exit_loop_flag = True
+#                         else:
+#                             name_of_takash = cell.value
+#                             if current_takash != cell.value:
+#                                 current_takash = cell.value
+#                                 machines_to_add = 0
+#                             machines_to_add += 1
+#                             current_row = []
+#                     else:
+#                         current_row.append(cell.value)
+#                     cell_count += 1
+#         '''after we pull out the data for the selected row we construct the Machine with all the data
+#         using a dictionary with key=hostname that save all the machines'''
+#         # Machine - (hostname, ip, who_am_i, last_send_time, is_working, three_last_status)
+#         dict_of_machines_in_sheet[current_row[2]] = Machine(current_row[2], current_row[1], current_row[0],
+#                                                             current_row[4], current_row[3])
+#         takash_with_machine.append([name_of_takash, dict_of_machines_in_sheet[current_row[2]]])
+#     takash_with_machine.pop()
+#
+#     last_takash_name = ""
+#
+#     if first_time_flag:
+#         return dict_of_machines_in_sheet
+#
+#     else:
+#         for tuple in takash_with_machine:  # tuple of (takash name, machine name)
+#             if last_takash_name != tuple[0]:
+#                 all_takash[tuple[0]] = Takash(tuple[0])
+#                 last_takash_name = tuple[0]
+#             all_takash[tuple[0]].add_machine(tuple[1])
+#
+#         return all_takash, dict_of_machines_in_sheet
 
 class Program(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -343,7 +454,7 @@ class Program(tk.Tk):
 
     def get_headquarters_name(self):  ### temp for now
 
-        workbook_obj = openpyxl.load_workbook(xl_file)
+        workbook_obj = openpyxl.load_workbook(read_from_file)
         sheet_obj = workbook_obj["שרתים"]
 
         current_takash = sheet_obj.cell(row=1, column=8).value
@@ -354,7 +465,7 @@ class Program(tk.Tk):
       self.top_frame.update_state_label.configure(text=update_state_place_name)
       if   self.update_state == 0:
         self.update_state = 1
-        self.after(5000, self.update_server_frame_in_ui)
+        self.after(UPDATE_UI_TIME_MSEC, self.update_server_frame_in_ui)
 
     def update_server_frame_in_ui(self):
         update_state_place_name = "לקראת עדכון אזור תאי קשר"
@@ -362,7 +473,7 @@ class Program(tk.Tk):
         x = insert_data_to_ui(app.server_frame, "שרתים", False)
         if self.update_state == 1:
             self.update_state = 2
-            self.after(5000, self.update_takash_frame_in_ui)
+            self.after(UPDATE_UI_TIME_MSEC, self.update_takash_frame_in_ui)
 
     def update_takash_frame_in_ui(self):
         update_state_place_name = "לקראת עדכון אזור קרונות"
@@ -370,7 +481,7 @@ class Program(tk.Tk):
         y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
         if self.update_state == 2:
             self.update_state = 3
-            self.after(5000, self.update_carriage_frame_in_ui)
+            self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
 
     def update_carriage_frame_in_ui(self):
         update_state_place_name = "לקראת עדכון"
@@ -378,7 +489,7 @@ class Program(tk.Tk):
         z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
         if self.update_state == 3:
             self.update_state = 0
-            self.after(5000, self.update_data_in_ui)
+            self.after(UPDATE_UI_TIME_MSEC, self.update_data_in_ui)
 
 class Servers_frame(tk.Frame):
     def __init__(self, parent, controller):
@@ -413,57 +524,16 @@ class Top_title(tk.Frame):
         span = tk.Frame(self, bg=BLACK1, height=2)
         span.pack(fill=tk.X, pady=5, padx=10)
 
-class ToolTip(object):
-
-    def __init__(self, widget):
-        self.widget = widget
-        self.tipwindow = None
-        self.id = None
-        self.x = self.y = 0
-
-    def showtip(self, text):
-        "Display text in tooltip window"
-        self.text = text
-        if self.tipwindow or not self.text:
-            return
-        x, y, cx, cy = self.widget.bbox("insert")
-        x = x + self.widget.winfo_rootx() + 57
-        y = y + cy + self.widget.winfo_rooty() +27
-        self.tipwindow = tw = tk.Toplevel(self.widget)
-        tw.wm_overrideredirect(1)
-        tw.wm_geometry("+%d+%d" % (x, y))
-        label = tk.Label(tw, text=self.text, justify=tk.LEFT,
-                      background="#ffffe0", relief=tk.SOLID, borderwidth=1,
-                      font=("tahoma", "8", "normal"))
-        label.pack(ipadx=1)
-
-    def hidetip(self):
-        tw = self.tipwindow
-        self.tipwindow = None
-        if tw:
-            tw.destroy()
-
-def Create_tool_tip(widget, text, need_delete):
-    # if need_delete:
-    #     toolTip.widget = None
-    #     toolTip.tipwindow = None
-    #     toolTip.id = None
-    #     toolTip.x = 0
-    #     toolTip.y = 0
-    toolTip = ToolTip(widget)
-    def enter(event):
-        toolTip.showtip(text)
-    def leave(event):
-        toolTip.hidetip()
-    widget.bind('<Enter>', enter)
-    widget.bind('<Leave>', leave)
 
 def scanning_all(dict_of_all_addresses, sheet):
 
-    path = xl_file
-    workbook_obj = openpyxl.load_workbook(path)
-
-    sheet_obj = workbook_obj[sheet]
+    if READ_FROM_JSON:
+        # TODO
+        print("json")
+    else:
+        path = read_from_file
+        workbook_obj = openpyxl.load_workbook(path)
+        sheet_obj = workbook_obj[sheet]
 
     list_address = []
     for key in dict_of_all_addresses:
@@ -484,7 +554,11 @@ def scanning_all(dict_of_all_addresses, sheet):
         update_file(sheet_obj, key, dict_of_all_addresses[key].is_working, dict_of_all_addresses[key].last_send_time)
 
     print_status_to_cmd('save')
-    workbook_obj.save(path)
+    if READ_FROM_JSON:
+        # TODO
+        print("json")
+    else:
+        workbook_obj.save(path)
 
 def update_file(sheet_obj, hostname, status, time):
 

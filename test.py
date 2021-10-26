@@ -1,25 +1,36 @@
-import tkinter as tk
-from tkinter import filedialog
+import json
+from pprint import pprint
+
+# Opening JSON file
+try:
+    file = open('data.json', encoding="utf8")
+except Exception as e:
+    print(e)
+    # returns JSON object as
+    # a dictionary
+data = json.load(file)
+
+# Iterating through the json
+# list
+sheet = 'SERVERS'
+
+for key in data[sheet]:
+    name = key["name"]
+    for device in key["devices"]:
+        print(name)
+        pprint(device)
+        print('\n')
 
 
 
-def upload_file():
-    file = tk.filedialog.askopenfilename()
-    fob = open(file , 'r')
-    print(fob.read())
-
-def main():
-    root = tk.Tk()
-    root.geometry("400x300")  # Size of the window
-    root.title('Pingger 2.0')
-    my_font1 = ('times', 18, 'bold')
-    l1 = tk.Label(root, text='Upload File & read', width=30, font=my_font1)
-    l1.grid(row=1, column=1)
-    b1 = tk.Button(root, text='Upload File',
-                   width=20, command=lambda: upload_file())
-    b1.grid(row=2, column=1)
-    root.mainloop()  # Keep the window open
+# for key in data[sheet]:
+#     print(key)
+#     # print(key["name"])
+#     print(key["devices"][0])
+#     # print(key["devices"][0]['ip'])
 
 
-if __name__ == '__main__':
-    main()
+# people = {"david": {'name': 'John', 'age': '27', 'sex': 'Male'},
+#           2: {'name': 'Marie', 'age': '22', 'sex': 'Female'}}
+#
+# print(people["david"]['name'])
