@@ -24,7 +24,7 @@ GREY = '#5a5956'
 MORE_DATA = True
 
 '''change READ_FROM_JSON to True if you wish read the data from a json file'''
-READ_FROM_JSON = True
+READ_FROM_JSON = False
 
 # files name
 xl_file = "data.xlsx"
