@@ -221,7 +221,7 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
                           fg=WHITE, font='Helvetica 8 bold')
     name_label.grid(row=0, column=0, sticky=tk.NSEW)
     for index, machine in enumerate(array_of_machines):
-        if machine.is_working == "עובד":
+        if machine.is_working == "עובד" or machine.is_working == True:
             background_button_color = GREEN
         else:
             background_button_color = RED
