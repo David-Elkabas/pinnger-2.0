@@ -8,15 +8,15 @@
           "hostname": "ZN1",
           "machine_type": "עמדה משולבת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": false,
+          "last_update_date": "27/10/2021, 17:17:02"
         },
         {
           "hostname": "ZN2",
           "machine_type": "שרת רדיו CCU",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": false,
+          "last_update_date": "27/10/2021, 17:17:02"
         }
       ]
     },
@@ -27,15 +27,15 @@
           "hostname": "ZN3",
           "machine_type": "עמדה משולבת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": false,
+          "last_update_date": "27/10/2021, 17:17:02"
         },
         {
           "hostname": "ZN4",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": false,
+          "last_update_date": "27/10/2021, 17:17:02"
         }
       ]
     }
@@ -48,22 +48,22 @@
           "hostname": "ZN5",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN6",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN7",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     },
@@ -74,22 +74,22 @@
           "hostname": "ZN8",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN9",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN10",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     },
@@ -100,22 +100,22 @@
           "hostname": "ZN11",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN12",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN13",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     },
@@ -126,22 +126,22 @@
           "hostname": "ZN14",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN15",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN16",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     },
@@ -152,22 +152,22 @@
           "hostname": "ZN17",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN18",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN19",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     },
@@ -178,22 +178,22 @@
           "hostname": "ZN20",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN21",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN22",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     },
@@ -204,27 +204,27 @@
           "hostname": "ZN23",
           "machine_type": "עמדה משולשת",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN24",
           "machine_type": "ישלק 1",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         },
         {
           "hostname": "ZN25",
           "machine_type": "ישלק 2",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:56"
         }
       ]
     }
   ],
-  "CARRIAGE": [
+  "CARRIAGES": [
     {
       "name": "קרון א",
       "devices": [
@@ -232,64 +232,64 @@
           "hostname": "ZN100",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN101",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN102",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN103",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN104",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN105",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN106",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN107",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN108",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         }
       ]
     },
@@ -300,64 +300,64 @@
           "hostname": "ZN110",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN111",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN112",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN113",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN114",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN115",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN116",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN117",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN118",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         }
       ]
     },
@@ -368,66 +368,67 @@
           "hostname": "ZN120",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN121",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN122",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN123",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN124",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN125",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN126",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN127",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         },
         {
           "hostname": "ZN128",
           "machine_type": "ידבר",
           "ip": "8.8.8.8",
-          "status": "",
-          "last_update_date": ""
+          "status": true,
+          "last_update_date": "27/10/2021, 17:16:57"
         }
       ]
     }
-  ]
+  ],
+  "MORE DATA": []
 }

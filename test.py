@@ -12,14 +12,21 @@ data = json.load(file)
 
 # Iterating through the json
 # list
+# print(data["name"])
 sheet = 'SERVERS'
 
-for key in data[sheet]:
-    name = key["name"]
-    for device in key["devices"]:
-        print(name)
+pprint(data[sheet])
+for server in data[sheet]:
+    for device in server["devices"]:
         pprint(device)
-        print('\n')
+
+# for key in data[sheet]:
+#     name = key["name"]
+#     for device in key["devices"]:
+#         print(name)
+#         pprint(device)
+#         print('\n')
+#         print(device["hostname"])
 
 
 
