@@ -12,29 +12,39 @@ from datetime import datetime
 import winsound
 import time
 
+# Opening JSON file
+try:
+    file = open("setting.json", encoding="utf8")
+except Exception as e:
+    print(e)
+    # returns JSON object as
+    # a dictionary
+setting_data = json.load(file)
 # colors:
-BLACK1 = '#252525'
-BLACK2 = '#404040'
-RED = '#c00002'
-GREEN = '#82c829'
-WHITE = '#FFFFFF'
-GREY = '#5a5956'
+BLACK1 = setting_data["colors"]["BLACK1"]
+BLACK2 = setting_data["colors"]["BLACK2"]
+RED = setting_data["colors"]["RED"]
+GREEN = setting_data["colors"]["GREEN"]
+WHITE = setting_data["colors"]["WHITE"]
+GREY = setting_data["colors"]["GREY"]
 
 '''change MORE_data to True if you wish to add additional data from 'more' sheet'''
-MORE_DATA = True
+MORE_DATA = setting_data["MORE_TAKASHIM"]
 
 '''change READ_FROM_JSON to True if you wish read the data from a json file'''
-READ_FROM_JSON = False
+READ_FROM_JSON = setting_data["read_from_json"]
 
 # files name
-xl_file = "data.xlsx"
-json_file = "data.json"
+xl_file = setting_data["xl_file_name"]
+json_file = setting_data["json_file_name"]
 if READ_FROM_JSON:
     read_from_file = json_file
 else:
     read_from_file = xl_file
 
 # measures
+
+FONT_SIZE = setting_data["font_size"]
 WIDTH = 900
 HEIGHT = 840
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
@@ -51,8 +61,8 @@ TAKASH_FRAME_HEIGHT = 240
 TAKASH_WIDTH = 80
 TAKASH_HEIGHT = 150
 
-UPDATE_UI_TIME_MSEC = 5000
-SEND_PING_TIME_MSEC = 250
+UPDATE_UI_TIME_MSEC = setting_data["UPDATE_UI_TIME_PER_AREA_IN_MSEC"]
+SEND_PING_TIME_MSEC = setting_data["PING_SEND_TIME_IN_MSEC"]
 
 
 # def flickering_color(button, color):
@@ -180,7 +190,7 @@ def update_GUI(button, color, time, ip):
 
 def send_ping(current_ip_address):
     try:
-        output = subprocess.check_output("ping -{} 1 {} -w 250ms".format('n' if platform.system().lower(
+        output = subprocess.check_output("ping -{} 1 {} -w 250ms ".format('n' if platform.system().lower(
         ) == "windows" else 'c', current_ip_address), shell=True, universal_newlines=True)
         if 'unreachable' in output:
             return False
@@ -307,6 +317,7 @@ def insert_data_to_ui(frame, sheet, is_carriage):
 
 
 def get_data_from_xl_file(path, sheet, first_time_flag):
+
     # To open the workbook, workbook object is created
     workbook_obj = openpyxl.load_workbook(path)
     sheet_obj = workbook_obj[sheet]
@@ -505,14 +516,27 @@ class Program(tk.Tk):
         self.top_frame.update_state_label.configure(text=update_state_place_name)
         y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
         if self.update_state == 2:
-            self.update_state = 3
+            if MORE_DATA == True:
+                self.update_state = 3
+                self.after(UPDATE_UI_TIME_MSEC, self.update_MORE_DATA_frame_in_ui)
+            else:
+                self.update_state = 4
+                self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
+
+    def update_MORE_DATA_frame_in_ui(self):
+
+        update_state_place_name = "לקראת עדכון אזור מידע נוסף"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        w = insert_data_to_ui(app.additional_frame, "לבדוק בנוסף", False)
+        if self.update_state == 3:
+            self.update_state = 4
             self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
 
     def update_carriage_frame_in_ui(self):
         update_state_place_name = "לקראת עדכון"
         self.top_frame.update_state_label.configure(text=update_state_place_name)
         z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
-        if self.update_state == 3:
+        if self.update_state == 4:
             self.update_state = 0
             self.after(UPDATE_UI_TIME_MSEC, self.update_data_in_ui)
 

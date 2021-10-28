@@ -3,22 +3,25 @@ from pprint import pprint
 
 # Opening JSON file
 try:
-    file = open('data.json', encoding="utf8")
+    file = open('setting.json', encoding="utf8")
 except Exception as e:
     print(e)
     # returns JSON object as
     # a dictionary
 data = json.load(file)
 
+pprint(data)
+print(data["MORE_TAKASHIM"])
+print(data["colors"]["BLACK1"])
 # Iterating through the json
 # list
 # print(data["name"])
-sheet = 'SERVERS'
-
-pprint(data[sheet])
-for server in data[sheet]:
-    for device in server["devices"]:
-        pprint(device)
+# sheet = 'SERVERS'
+#
+# pprint(data[sheet])
+# for server in data[sheet]:
+#     for device in server["devices"]:
+#         pprint(device)
 
 # for key in data[sheet]:
 #     name = key["name"]

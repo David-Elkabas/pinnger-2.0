@@ -1,0 +1,17 @@
+{
+  "MORE_TAKASHIM": true,
+  "read_from_json": true,
+  "xl_file_name": "data.xlsx",
+  "json_file_name": "data.json",
+  "font_size": 3,
+  "UPDATE_UI_TIME_PER_AREA_IN_MSEC": 5000,
+  "PING_SEND_TIME_IN_MSEC": 250,
+  "colors": {
+    "BLACK1": "#252525",
+    "BLACK2": "#404040",
+    "RED": "#c00002",
+    "GREEN": "#82c829",
+    "WHITE": "#FFFFFF",
+    "GREY": "#5a5956"
+  }
+}
