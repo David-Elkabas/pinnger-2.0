@@ -34,6 +34,12 @@ MORE_DATA = setting_data["MORE_TAKASHIM"]
 '''change READ_FROM_JSON to True if you wish read the data from a json file'''
 READ_FROM_JSON = setting_data["read_from_json"]
 
+IP_SOURCE_ONE = setting_data["ip_source_1"]
+IP_SOURCE_TWO = setting_data["ip_source_2"]
+
+UPDATE_UI_TIME_MSEC = setting_data["UPDATE_UI_TIME_PER_AREA_IN_MSEC"]
+SEND_PING_TIME_MSEC = setting_data["PING_SEND_TIME_IN_MSEC"]
+
 # files name
 xl_file = setting_data["xl_file_name"]
 json_file = setting_data["json_file_name"]
@@ -60,9 +66,6 @@ TAKASH_FRAME_HEIGHT = 240
 
 TAKASH_WIDTH = 80
 TAKASH_HEIGHT = 150
-
-UPDATE_UI_TIME_MSEC = setting_data["UPDATE_UI_TIME_PER_AREA_IN_MSEC"]
-SEND_PING_TIME_MSEC = setting_data["PING_SEND_TIME_IN_MSEC"]
 
 
 # def flickering_color(button, color):
@@ -312,40 +315,57 @@ def Create_tool_tip(widget, text, need_delete):
     widget.bind('<Leave>', leave)
 
 
-def send_one_ping(takash_ip, button):
-    response = send_ping(takash_ip)
-    print(takash_ip)
-    if response:
-        color = GREEN
-        status = True
-        print("good")
-    else:
-        print("bad")
-        status = False
-        color = RED
+def send_one_ping(ip_or_hostname, button):
+    response = send_ping(ip_or_hostname)
+    print(f'sent ping to {ip_or_hostname}')
+    if not response:
+        res = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_ONE)
+        if not res:
+            res2 = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_TWO)
+            if not res2:
+                print("didn't succeeded to send ping\n")
+                color = RED
+                update_GUI(button, color, time, ip_or_hostname)
+                return
 
-    # path = read_from_file
-    # workbook_obj = openpyxl.load_workbook(path)
-    # sheet_obj = workbook_obj[sheet]
-    # time = get_date()
-    # # update_file(sheet_obj, hostname, status, time)
-    #
-    # workbook_obj.save(path)
+    color = GREEN
+    print("Succeeded to send ping \n")
 
-    update_GUI(button, color, time, takash_ip)
+    update_GUI(button, color)
 
 
-def update_GUI(button, color, time, ip):
+def update_GUI(button, color):
     button.configure(bg=color)
-    # text_to_add = 'ip: ' + ip + "\nlast time: " + time
-    ''' in the future need to be need_delete = True  '''
-    # Create_tool_tip(button, text=text_to_add, need_delete = False)
+
+
+def send_ping_without_GUI_update(ip_or_hostname):
+    response = send_ping(ip_or_hostname)
+    print(f'sending ping to {ip_or_hostname} ')
+    if not response:
+        res = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_ONE)
+        if not res:
+            res2 = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_TWO)
+            if not res2:
+                return False
+    return True
 
 
 def send_ping(current_ip_address):
     try:
-        output = subprocess.check_output("ping -{} 1 {} -w 250ms ".format('n' if platform.system().lower(
-        ) == "windows" else 'c', current_ip_address), shell=True, universal_newlines=True)
+        output = subprocess.check_output("ping -{} 1 {} -w {}".format('n' if platform.system().lower(
+        ) == "windows" else 'c', current_ip_address, SEND_PING_TIME_MSEC), shell=True, universal_newlines=True)
+        if 'unreachable' in output:
+            return False
+        else:
+            return True
+    except Exception:
+        return False
+
+
+def send_ping_with_source_ip(ip_address, source_ip):
+    try:
+        output = subprocess.check_output("ping -{} 1 {} -w 250 -S {}".format('n' if platform.system().lower(
+        ) == "windows" else 'c', ip_address, source_ip), shell=True, universal_newlines=True)
         if 'unreachable' in output:
             return False
         else:
@@ -416,7 +436,7 @@ def HE_to_EN_sheet_name(name):
 
 
 # TODO edit the path to include json to
-def print_status_to_cmd(commend, path="input.xlsx", sheet_name=''):
+def print_status_to_cmd(commend, path, sheet_name=''):
     if commend == 'update':
         print(
             "updating - send ping to all of the takashes ip address and save data in xl file: " + path + " at sheet: " + sheet_name)
@@ -589,7 +609,7 @@ def scanning_all(dict_of_all_addresses, sheet):
             list_address.append(ip_address)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = executor.map(send_ping, list_address)
+        results = executor.map(send_ping_without_GUI_update, list_address)
 
     i = 0
     results = list(results)
@@ -607,7 +627,7 @@ def scanning_all(dict_of_all_addresses, sheet):
             update_xlsx_file(sheet_obj, hostname, dict_of_all_addresses[hostname].is_working,
                              dict_of_all_addresses[hostname].last_send_time)
 
-    print_status_to_cmd('save')
+    print_status_to_cmd('save', path)
     if READ_FROM_JSON:
         # TODO
         print("json")
