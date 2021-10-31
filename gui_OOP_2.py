@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import tkinter.font as tkFont
 import subprocess
 import json
 # import treading
@@ -67,20 +68,40 @@ TAKASH_FRAME_HEIGHT = 240
 TAKASH_WIDTH = 80
 TAKASH_HEIGHT = 150
 
-
 # def flickering_color(button, color):
 #     for i in range(0,2):
 #         button.configure(bg=BLACK1)
 #         time.sleep(0.1)
 #         button.configure(bg=GREEN)
 #         time.sleep(0.1)
-class Program(tk.Tk):
+
+
+# TODO - add Fonts to EVERYTHING
+class Fonts:
+    def __init__(self):
+        self.customFont_small = tkFont.Font(family="Helvetica", size=8)
+        self.customFont = tkFont.Font(family="Helvetica", size=10)
+        self.customFont_big = tkFont.Font(family="Helvetica", size=12)
+        self.customFont_huge = tkFont.Font(family="Helvetica", size=18)
+
+    def OnBigger(self):
+        '''Make the font 2 points bigger'''
+        size = self.customFont['size']
+        self.customFont.configure(size=size+2)
+
+    def OnSmaller(self):
+        '''Make the font 2 points smaller'''
+        size = self.customFont['size']
+        self.customFont.configure(size=size-2)
+
+
+class Program(tk.Tk, Fonts):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
+        Fonts.__init__(self)
         self.update_state = 0
-        if MORE_DATA == True:
+        if MORE_DATA:
             w = WIDTH
             h = HEIGHT
         else:
@@ -96,7 +117,7 @@ class Program(tk.Tk):
 
         self.create_right_side()
 
-        if MORE_DATA == True:
+        if MORE_DATA:
             self.left_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
             self.left_container.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
             self.left_container.pack_propagate(0)
@@ -200,34 +221,42 @@ class Servers_frame(tk.Frame):
         tk.Frame.__init__(self, parent, bg=BLACK2)
 
 
-class Top_title(tk.Frame):
+class Top_title(tk.Frame, Fonts):
     def __init__(self, parent, title, need_buttons):
         tk.Frame.__init__(self, parent, bg=BLACK2)
+        Fonts.__init__(self)
         self.update_state = 0
         self.upper_frame = tk.Frame(self, bg=BLACK2)
         self.upper_frame.pack(fill=tk.X)
 
         if need_buttons == True:
             self.setting_button = tk.Button(self.upper_frame, text=" הגדרות", bg=BLACK1, fg=WHITE,
-                                            font='Helvetica 8 bold', width=6)
-            self.setting_button.bind("<Button>",
-                                     lambda e: NewWindow(parent))
+                                            font=self.customFont_small, width=10)
+            self.setting_button.bind("<Button>", lambda e : NewWindow(parent))
             self.setting_button.grid(row=0, column=0, sticky=tk.W, padx=5)
+
             self.statistics_button = tk.Button(self.upper_frame, text="סטיסטיקה", bg=BLACK1, fg=WHITE,
-                                               font='Helvetica 8 bold', width=6)
+                                               font=self.customFont_small, width=10)
             self.statistics_button.grid(row=1, column=0, sticky=tk.W, padx=5)
 
-        self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font='Helvetica 18 bold')
+            bigger = tk.Button(self.upper_frame, text="+", command=self.OnBigger)
+            bigger.grid(row=0, column=1, sticky=tk.W)
+            smaller = tk.Button(self.upper_frame, text="- ", command=self.OnSmaller)
+            smaller.grid(row=1, column=1, sticky=tk.W)
+
+        self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font=self.customFont_huge)
         self.title_top.grid(row=0, column=1, rowspan=2)
         if need_buttons:
             self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
-                                               font='Helvetica 10 bold', width=18)
+                                               font=self.customFont, width=18)
             self.update_state_label.grid(row=0, column=2, rowspan=2)
         self.upper_frame.grid_rowconfigure(1, weight=1)
         self.upper_frame.grid_columnconfigure(1, weight=1)
 
         span = tk.Frame(self, bg=BLACK1, height=2)
         span.pack(fill=tk.X, pady=5, padx=10)
+
+
 
 
 class NewWindow(tk.Toplevel):
