@@ -71,6 +71,160 @@ SEND_PING_TIME_MSEC = setting_data["PING_SEND_TIME_IN_MSEC"]
 #         time.sleep(0.1)
 #         button.configure(bg=GREEN)
 #         time.sleep(0.1)
+class Program(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+
+        self.update_state = 0
+        if MORE_DATA == True:
+            w = WIDTH
+            h = HEIGHT
+        else:
+            w = right_WIDTH
+            h = right_HEIGHT
+        self.main_container = tk.Frame(self, bg=BLACK2, width=w, height=h)
+        self.main_container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
+        self.main_container.pack_propagate(0)
+
+        self.right_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
+        self.right_container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
+        self.right_container.pack_propagate(0)
+
+        self.create_right_side()
+
+        if MORE_DATA == True:
+            self.left_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
+            self.left_container.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
+            self.left_container.pack_propagate(0)
+            self.create_left_side()
+        # self.container.grid_rowconfigure(0, weight=1)
+        # self.container.grid_columnconfigure(0, weight=1)
+
+    def create_left_side(self):
+        self.headquarters_name_left = "כלים נוספים לבדיקה"
+        self.top_frame_left = Top_title(self.left_container, self.headquarters_name_left, False)
+        self.top_frame_left.pack(fill=tk.X)
+
+        self.additional_frame = Servers_frame(self.left_container, self)
+        self.additional_frame.pack()
+
+    def create_right_side(self):
+        self.headquarters_name = self.get_headquarters_name()
+        self.top_frame = Top_title(self.right_container, self.headquarters_name, True)
+        self.top_frame.pack(fill=tk.X)
+
+        self.server_frame = Servers_frame(self.right_container, self)
+        self.server_frame.pack()
+
+        span = tk.Frame(self.right_container, bg=BLACK1, height=2)
+        span.pack(fill=tk.X, pady=5, padx=10)
+
+        self.takash_frame = Servers_frame(self.right_container, self)
+        self.takash_frame.pack()
+
+        span = tk.Frame(self.right_container, bg=BLACK1, height=2)
+        span.pack(fill=tk.X, pady=5, padx=10)
+
+        self.carriage_frame = Servers_frame(self.right_container, self)
+        self.carriage_frame.pack()
+
+    def get_headquarters_name(self):  ### temp for now
+
+        if READ_FROM_JSON:
+            try:
+                file = open(read_from_file, encoding="utf8")
+            except Exception as e:
+                print(e)
+                # returns JSON object as
+                # a dictionary
+            data_from_file = json.load(file)
+            return data_from_file["name"]
+        else:
+            workbook_obj = openpyxl.load_workbook(read_from_file)
+            sheet_obj = workbook_obj["שרתים"]
+            current_takash = sheet_obj.cell(row=1, column=8).value
+        return current_takash
+
+    def update_data_in_ui(self):
+
+        update_state_place_name = "לקראת עדכון אזור שרתים"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        if self.update_state == 0:
+            self.update_state = 1
+            self.after(UPDATE_UI_TIME_MSEC, self.update_server_frame_in_ui)
+
+    def update_server_frame_in_ui(self):
+        update_state_place_name = "לקראת עדכון אזור תאי קשר"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        x = insert_data_to_ui(app.server_frame, "שרתים", False)
+        if self.update_state == 1:
+            self.update_state = 2
+            self.after(UPDATE_UI_TIME_MSEC, self.update_takash_frame_in_ui)
+
+    def update_takash_frame_in_ui(self):
+        update_state_place_name = "לקראת עדכון אזור קרונות"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
+        if self.update_state == 2:
+            if MORE_DATA == True:
+                self.update_state = 3
+                self.after(UPDATE_UI_TIME_MSEC, self.update_MORE_DATA_frame_in_ui)
+            else:
+                self.update_state = 4
+                self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
+
+    def update_MORE_DATA_frame_in_ui(self):
+
+        update_state_place_name = "לקראת עדכון אזור מידע נוסף"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        w = insert_data_to_ui(app.additional_frame, "לבדוק בנוסף", False)
+        if self.update_state == 3:
+            self.update_state = 4
+            self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
+
+    def update_carriage_frame_in_ui(self):
+        update_state_place_name = "לקראת עדכון"
+        self.top_frame.update_state_label.configure(text=update_state_place_name)
+        z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
+        if self.update_state == 4:
+            self.update_state = 0
+            self.after(UPDATE_UI_TIME_MSEC, self.update_data_in_ui)
+
+
+class Servers_frame(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=BLACK2)
+
+
+class Top_title(tk.Frame):
+    def __init__(self, parent, title, need_buttons):
+        tk.Frame.__init__(self, parent, bg=BLACK2)
+        self.update_state = 0
+        self.upper_frame = tk.Frame(self, bg=BLACK2)
+        self.upper_frame.pack(fill=tk.X)
+
+        if need_buttons == True:
+            self.setting_button = tk.Button(self.upper_frame, text=" הגדרות", bg=BLACK1, fg=WHITE,
+                                            font='Helvetica 8 bold', width=6)
+            self.setting_button.bind("<Button>",
+                                     lambda e: NewWindow(parent))
+            self.setting_button.grid(row=0, column=0, sticky=tk.W, padx=5)
+            self.statistics_button = tk.Button(self.upper_frame, text="סטיסטיקה", bg=BLACK1, fg=WHITE,
+                                               font='Helvetica 8 bold', width=6)
+            self.statistics_button.grid(row=1, column=0, sticky=tk.W, padx=5)
+
+        self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font='Helvetica 18 bold')
+        self.title_top.grid(row=0, column=1, rowspan=2)
+        if need_buttons:
+            self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
+                                               font='Helvetica 10 bold', width=18)
+            self.update_state_label.grid(row=0, column=2, rowspan=2)
+        self.upper_frame.grid_rowconfigure(1, weight=1)
+        self.upper_frame.grid_columnconfigure(1, weight=1)
+
+        span = tk.Frame(self, bg=BLACK1, height=2)
+        span.pack(fill=tk.X, pady=5, padx=10)
+
 
 class NewWindow(tk.Toplevel):
 
@@ -215,7 +369,6 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
         button_font = 'Helvetica 6 bold'
         row_place = 0
         column_place = place
-
     else:
         padding_x = 5
         label_wraplength = 0
@@ -238,22 +391,18 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
 
         button = tk.Button(frame, text=machine.who_am_i, bg=background_button_color,
                            fg=WHITE, font=button_font)
-
-        button.configure(
-            command=lambda ip=machine.ip, b=button: send_one_ping(ip, b))
+        if machine.ip == ' ' or machine.ip =='' or machine.ip is None:
+            ip_or_hostname = machine.hostname
+            text_to_show = 'hostname: '
+        else:
+            ip_or_hostname = machine.ip
+            text_to_show = 'ip: '
+        button.configure(command=lambda what_to_check=ip_or_hostname, b=button: send_one_ping(what_to_check, b))
         button.grid(row=index + 1, column=0, sticky=tk.EW)
 
-        text_to_add = 'ip: ' + str(machine.ip + "\n" + 'last time: ' + machine.last_send_time)
+        text_to_add = text_to_show + str(ip_or_hostname + "\n" + 'last time: ' + machine.last_send_time)
         Create_tool_tip(button, text=text_to_add, need_delete=False)
 
-
-# def add_data_to_Takash():
-#     last_takash_name = ""
-#     for tuple in takash_with_machine:  # tuple of (takash name, machine name)
-#         if last_takash_name != tuple[0]:
-#             all_takash[tuple[0]] = Takash(tuple[0])
-#             last_takash_name = tuple[0]
-#         all_takash[tuple[0]].add_machine(tuple[1])
 
 def HE_to_EN_sheet_name(name):
     if name == 'שרתים':
@@ -421,161 +570,6 @@ def get_data_from_json_file(path, sheet, first_time_flag):
         return all_takash, dict_of_machines_in_sheet
 
 
-class Program(tk.Tk):
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-
-        self.update_state = 0
-        if MORE_DATA == True:
-            w = WIDTH
-            h = HEIGHT
-        else:
-            w = right_WIDTH
-            h = right_HEIGHT
-        self.main_container = tk.Frame(self, bg=BLACK2, width=w, height=h)
-        self.main_container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
-        self.main_container.pack_propagate(0)
-
-        self.right_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
-        self.right_container.pack(fill=tk.BOTH, expand=True, side=tk.RIGHT)
-        self.right_container.pack_propagate(0)
-
-        self.create_right_side()
-
-        if MORE_DATA == True:
-            self.left_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
-            self.left_container.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
-            self.left_container.pack_propagate(0)
-            self.create_left_side()
-        # self.container.grid_rowconfigure(0, weight=1)
-        # self.container.grid_columnconfigure(0, weight=1)
-
-    def create_left_side(self):
-        self.headquarters_name_left = "כלים נוספים לבדיקה"
-        self.top_frame_left = Top_title(self.left_container, self.headquarters_name_left, False)
-        self.top_frame_left.pack(fill=tk.X)
-
-        self.additional_frame = Servers_frame(self.left_container, self)
-        self.additional_frame.pack()
-
-    def create_right_side(self):
-        self.headquarters_name = self.get_headquarters_name()
-        self.top_frame = Top_title(self.right_container, self.headquarters_name, True)
-        self.top_frame.pack(fill=tk.X)
-
-        self.server_frame = Servers_frame(self.right_container, self)
-        self.server_frame.pack()
-
-        span = tk.Frame(self.right_container, bg=BLACK1, height=2)
-        span.pack(fill=tk.X, pady=5, padx=10)
-
-        self.takash_frame = Servers_frame(self.right_container, self)
-        self.takash_frame.pack()
-
-        span = tk.Frame(self.right_container, bg=BLACK1, height=2)
-        span.pack(fill=tk.X, pady=5, padx=10)
-
-        self.carriage_frame = Servers_frame(self.right_container, self)
-        self.carriage_frame.pack()
-
-    def get_headquarters_name(self):  ### temp for now
-
-        if READ_FROM_JSON:
-            try:
-                file = open(read_from_file, encoding="utf8")
-            except Exception as e:
-                print(e)
-                # returns JSON object as
-                # a dictionary
-            data_from_file = json.load(file)
-            return data_from_file["name"]
-        else:
-            workbook_obj = openpyxl.load_workbook(read_from_file)
-            sheet_obj = workbook_obj["שרתים"]
-            current_takash = sheet_obj.cell(row=1, column=8).value
-        return current_takash
-
-    def update_data_in_ui(self):
-
-        update_state_place_name = "לקראת עדכון אזור שרתים"
-        self.top_frame.update_state_label.configure(text=update_state_place_name)
-        if self.update_state == 0:
-            self.update_state = 1
-            self.after(UPDATE_UI_TIME_MSEC, self.update_server_frame_in_ui)
-
-    def update_server_frame_in_ui(self):
-        update_state_place_name = "לקראת עדכון אזור תאי קשר"
-        self.top_frame.update_state_label.configure(text=update_state_place_name)
-        x = insert_data_to_ui(app.server_frame, "שרתים", False)
-        if self.update_state == 1:
-            self.update_state = 2
-            self.after(UPDATE_UI_TIME_MSEC, self.update_takash_frame_in_ui)
-
-    def update_takash_frame_in_ui(self):
-        update_state_place_name = "לקראת עדכון אזור קרונות"
-        self.top_frame.update_state_label.configure(text=update_state_place_name)
-        y = insert_data_to_ui(app.takash_frame, "תא קשר", False)
-        if self.update_state == 2:
-            if MORE_DATA == True:
-                self.update_state = 3
-                self.after(UPDATE_UI_TIME_MSEC, self.update_MORE_DATA_frame_in_ui)
-            else:
-                self.update_state = 4
-                self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
-
-    def update_MORE_DATA_frame_in_ui(self):
-
-        update_state_place_name = "לקראת עדכון אזור מידע נוסף"
-        self.top_frame.update_state_label.configure(text=update_state_place_name)
-        w = insert_data_to_ui(app.additional_frame, "לבדוק בנוסף", False)
-        if self.update_state == 3:
-            self.update_state = 4
-            self.after(UPDATE_UI_TIME_MSEC, self.update_carriage_frame_in_ui)
-
-    def update_carriage_frame_in_ui(self):
-        update_state_place_name = "לקראת עדכון"
-        self.top_frame.update_state_label.configure(text=update_state_place_name)
-        z = insert_data_to_ui(app.carriage_frame, "קרונות", True)
-        if self.update_state == 4:
-            self.update_state = 0
-            self.after(UPDATE_UI_TIME_MSEC, self.update_data_in_ui)
-
-
-class Servers_frame(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=BLACK2)
-
-
-class Top_title(tk.Frame):
-    def __init__(self, parent, title, need_buttons):
-        tk.Frame.__init__(self, parent, bg=BLACK2)
-        self.update_state = 0
-        self.upper_frame = tk.Frame(self, bg=BLACK2)
-        self.upper_frame.pack(fill=tk.X)
-
-        if need_buttons == True:
-            self.setting_button = tk.Button(self.upper_frame, text=" הגדרות", bg=BLACK1, fg=WHITE,
-                                            font='Helvetica 8 bold', width=6)
-            self.setting_button.bind("<Button>",
-                                     lambda e: NewWindow(parent))
-            self.setting_button.grid(row=0, column=0, sticky=tk.W, padx=5)
-            self.statistics_button = tk.Button(self.upper_frame, text="סטיסטיקה", bg=BLACK1, fg=WHITE,
-                                               font='Helvetica 8 bold', width=6)
-            self.statistics_button.grid(row=1, column=0, sticky=tk.W, padx=5)
-
-        self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font='Helvetica 18 bold')
-        self.title_top.grid(row=0, column=1, rowspan=2)
-        if need_buttons:
-            self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
-                                               font='Helvetica 10 bold', width=18)
-            self.update_state_label.grid(row=0, column=2, rowspan=2)
-        self.upper_frame.grid_rowconfigure(1, weight=1)
-        self.upper_frame.grid_columnconfigure(1, weight=1)
-
-        span = tk.Frame(self, bg=BLACK1, height=2)
-        span.pack(fill=tk.X, pady=5, padx=10)
-
-
 def scanning_all(dict_of_all_addresses, sheet):
 
     path = read_from_file
@@ -588,7 +582,11 @@ def scanning_all(dict_of_all_addresses, sheet):
 
     list_address = []
     for key in dict_of_all_addresses:
-        list_address.append(dict_of_all_addresses[key].ip)
+        ip_address = dict_of_all_addresses[key].ip
+        if ip_address == '' or ip_address == ' ':
+            list_address.append(dict_of_all_addresses[key].hostname)
+        else:
+            list_address.append(ip_address)
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         results = executor.map(send_ping, list_address)
