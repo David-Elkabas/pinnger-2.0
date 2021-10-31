@@ -75,6 +75,7 @@ TAKASH_HEIGHT = 150
 #         button.configure(bg=GREEN)
 #         time.sleep(0.1)
 class Program(tk.Tk):
+
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
@@ -315,7 +316,7 @@ def Create_tool_tip(widget, text, need_delete):
     widget.bind('<Leave>', leave)
 
 
-def send_one_ping(ip_or_hostname, button):
+def send_one_ping(ip_or_hostname, button, machine):
     response = send_ping(ip_or_hostname)
     print(f'sent ping to {ip_or_hostname}')
     if not response:
@@ -324,10 +325,16 @@ def send_one_ping(ip_or_hostname, button):
             res2 = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_TWO)
             if not res2:
                 print("didn't succeeded to send ping\n")
+                machine.three_last_working_state.insert(0, False)
+                machine.three_last_working_state.pop()
+                print(machine.three_last_working_state)
                 color = RED
-                update_GUI(button, color, time, ip_or_hostname)
+                update_GUI(button, color)
                 return
 
+    machine.three_last_working_state.insert(0, True)
+    machine.three_last_working_state.pop()
+    print(machine.three_last_working_state)
     color = GREEN
     print("Succeeded to send ping \n")
 
@@ -339,7 +346,7 @@ def update_GUI(button, color):
 
 
 def send_ping_without_GUI_update(ip_or_hostname):
-    response = send_ping(ip_or_hostname)
+    response = False  # send_ping(ip_or_hostname)
     print(f'sending ping to {ip_or_hostname} ')
     if not response:
         res = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_ONE)
@@ -400,24 +407,24 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
     frame = tk.Frame(frame_to_add_to, bg=BLACK1, width=TAKASH_WIDTH, height=300)
     frame.grid(row=row_place, column=column_place, padx=padding_x, pady=2, sticky=tk.N)
 
-    name_label = tk.Label(frame, text=title_name, bd=2, bg=label_background, wraplength=label_wraplength, height=2,
-                          fg=WHITE, font='Helvetica 8 bold')
+    name_label = tk.Label(frame, text=title_name, bd=2, bg=label_background, fg=WHITE,
+                          wraplength=label_wraplength, height=2, font='Helvetica 8 bold')
     name_label.grid(row=0, column=0, sticky=tk.NSEW)
     for index, machine in enumerate(array_of_machines):
-        if machine.is_working == "עובד" or machine.is_working == True:
+        if any(machine.three_last_working_state):
             background_button_color = GREEN
         else:
             background_button_color = RED
 
         button = tk.Button(frame, text=machine.who_am_i, bg=background_button_color,
                            fg=WHITE, font=button_font)
-        if machine.ip == ' ' or machine.ip =='' or machine.ip is None:
+        if machine.ip == ' ' or machine.ip == '' or machine.ip is None:
             ip_or_hostname = machine.hostname
             text_to_show = 'hostname: '
         else:
             ip_or_hostname = machine.ip
             text_to_show = 'ip: '
-        button.configure(command=lambda what_to_check=ip_or_hostname, b=button: send_one_ping(what_to_check, b))
+        button.configure(command=lambda ip_h=ip_or_hostname, b=button, m=machine: send_one_ping(ip_h, b, m))
         button.grid(row=index + 1, column=0, sticky=tk.EW)
 
         text_to_add = text_to_show + str(ip_or_hostname + "\n" + 'last time: ' + machine.last_send_time)
@@ -435,7 +442,6 @@ def HE_to_EN_sheet_name(name):
         return 'MORE DATA'
 
 
-# TODO edit the path to include json to
 def print_status_to_cmd(commend, path, sheet_name=''):
     if commend == 'update':
         print(
@@ -469,7 +475,7 @@ def insert_data_to_ui(frame, sheet, is_carriage):
         dict_of_takashes, dict_of_machines_in_sheet = get_data_from_xl_file(path, sheet, is_first_time)
     temp_machine_name_list = []
 
-    if is_carriage == False:
+    if not is_carriage:
         if len(dict_of_takashes.keys()) > 9:
             print("cant be more than 9 TAKASHIM")
             return False
@@ -486,7 +492,6 @@ def insert_data_to_ui(frame, sheet, is_carriage):
 
 
 def get_data_from_xl_file(path, sheet, first_time_flag):
-
     # To open the workbook, workbook object is created
     workbook_obj = openpyxl.load_workbook(path)
     sheet_obj = workbook_obj[sheet]
@@ -526,7 +531,8 @@ def get_data_from_xl_file(path, sheet, first_time_flag):
         using a dictionary with key=hostname that save all the machines'''
         # Machine - (hostname, ip, who_am_i, last_send_time, is_working, three_last_status)
         dict_of_machines_in_sheet[current_row[2]] = Machine(current_row[2], current_row[1], current_row[0],
-                                                            current_row[4], current_row[3])
+                                                            current_row[4], current_row[3],
+                                                            [current_row[3], current_row[3], current_row[3]])
         takash_with_machine.append([name_of_takash, dict_of_machines_in_sheet[current_row[2]]])
     takash_with_machine.pop()
 
@@ -568,14 +574,16 @@ def get_data_from_json_file(path, sheet, first_time_flag):
             machine_type = device["machine_type"]
             last_update_date = device["last_update_date"]
             status = device["status"]
+            three_last_working_state = device["three_last_working_state"]
 
             '''after we pull out the data from the selected place we construct the Machine class with 
                    all the data using a dictionary with key=hostname that save all the machines in it'''
             # Machine - (hostname, ip, who_am_i, last_send_time, is_working, three_last_status)
-            #     dict_of_machines_in_sheet[hostname] = Machine(hostname, ip, machine_type, last_update_date, status)
-            dict_of_machines_in_sheet[hostname] = Machine(hostname, ip, machine_type, last_update_date, status)
+            #     dict_of_machines_in_sheet[hostname] = Machine(hostname, ip, machine_type, last_update_date, status,
+            #     three_last_working_state)
+            dict_of_machines_in_sheet[hostname] = Machine(hostname, ip, machine_type, last_update_date,
+                                                          status, three_last_working_state)
             takash_with_machine.append([name_of_takash, dict_of_machines_in_sheet[hostname]])
-
 
     last_takash_name = ""
 
@@ -591,7 +599,6 @@ def get_data_from_json_file(path, sheet, first_time_flag):
 
 
 def scanning_all(dict_of_all_addresses, sheet):
-
     path = read_from_file
     sheet_obj = ""
     if READ_FROM_JSON:
@@ -615,6 +622,8 @@ def scanning_all(dict_of_all_addresses, sheet):
     results = list(results)
     for key in dict_of_all_addresses:
         dict_of_all_addresses[key].is_working = results[i]
+        dict_of_all_addresses[key].three_last_working_state.insert(0, results[i])
+        dict_of_all_addresses[key].three_last_working_state.pop()
         time = get_date()
         dict_of_all_addresses[key].last_send_time = time
         i += 1
@@ -622,21 +631,19 @@ def scanning_all(dict_of_all_addresses, sheet):
     for hostname in dict_of_all_addresses:
         if READ_FROM_JSON:
             update_json_file(sheet_obj, hostname, dict_of_all_addresses[hostname].is_working,
-                             dict_of_all_addresses[hostname].last_send_time)
+                             dict_of_all_addresses[hostname].last_send_time,
+                             dict_of_all_addresses[hostname].three_last_working_state)
         else:
             update_xlsx_file(sheet_obj, hostname, dict_of_all_addresses[hostname].is_working,
-                             dict_of_all_addresses[hostname].last_send_time)
+                             dict_of_all_addresses[hostname].last_send_time,
+                             dict_of_all_addresses[hostname].three_last_working_state)
 
     print_status_to_cmd('save', path)
-    if READ_FROM_JSON:
-        # TODO
-        print("json")
-    else:
+    if not READ_FROM_JSON:
         workbook_obj.save(path)
 
 
-def update_json_file(obj_name, hostname, status, time):
-
+def update_json_file(obj_name, hostname, status, time, three_last_working_state):
     try:
         file = open(read_from_file, encoding="utf8")
     except Exception as e:
@@ -651,13 +658,14 @@ def update_json_file(obj_name, hostname, status, time):
             if device["hostname"] == hostname:
                 device["status"] = status
                 device["last_update_date"] = time
+                device["three_last_working_state"] = three_last_working_state
 
     updated_file = open(read_from_file, "w", encoding="utf8")
     json.dump(data, updated_file, ensure_ascii=False)
     updated_file.close()
 
 
-def update_xlsx_file(sheet_obj, hostname, status, time):
+def update_xlsx_file(sheet_obj, hostname, status, time, three_last_working_state):
     cell_positions = ''
     time_cell_positions = ''
     for row in sheet_obj.rows:
