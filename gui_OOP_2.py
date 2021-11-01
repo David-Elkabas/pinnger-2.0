@@ -313,7 +313,7 @@ def Create_tool_tip(widget, text, need_delete):
 
 
 def send_one_ping(ip_or_hostname, button, machine):
-    response = False # send_ping(ip_or_hostname)
+    response = send_ping(ip_or_hostname)
     print(f'sent ping to {ip_or_hostname}')
     if not response:
         res = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_ONE)
@@ -321,16 +321,16 @@ def send_one_ping(ip_or_hostname, button, machine):
             res2 = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_TWO)
             if not res2:
                 print("didn't succeeded to send ping\n")
-                machine.three_last_working_state.insert(0, False)
-                machine.three_last_working_state.pop()
-                print(machine.three_last_working_state)
+                if READ_FROM_JSON:
+                    machine.three_last_working_state.insert(0, False)
+                    machine.three_last_working_state.pop()
+                    print(machine.three_last_working_state)
                 color = RED
                 update_GUI(button, color)
                 return
-
-    machine.three_last_working_state.insert(0, True)
-    machine.three_last_working_state.pop()
-    print(machine.three_last_working_state)
+    if READ_FROM_JSON:
+        machine.three_last_working_state.insert(0, True)
+        machine.three_last_working_state.pop()
     color = GREEN
     print("Succeeded to send ping \n")
 
@@ -342,7 +342,7 @@ def update_GUI(button, color):
 
 
 def send_ping_without_GUI_update(ip_or_hostname):
-    response = False  # send_ping(ip_or_hostname)
+    response = send_ping(ip_or_hostname)
     print(f'sending ping to {ip_or_hostname} ')
     if not response:
         res = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_ONE)
@@ -407,10 +407,16 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
                           wraplength=label_wraplength, height=2, font=f'Helvetica {FONT_SIZE + 2} bold')
     name_label.grid(row=0, column=0, sticky=tk.NSEW)
     for index, machine in enumerate(array_of_machines):
-        if any(machine.three_last_working_state):
-            background_button_color = GREEN
+        if READ_FROM_JSON:
+            if any(machine.three_last_working_state):
+                background_button_color = GREEN
+            else:
+                background_button_color = RED
         else:
-            background_button_color = RED
+            if machine.is_working == "עובד":
+                background_button_color = GREEN
+            else:
+                background_button_color = RED
 
         button = tk.Button(frame, text=machine.who_am_i, bg=background_button_color,
                            fg=WHITE, font=button_font)
@@ -618,8 +624,9 @@ def scanning_all(dict_of_all_addresses, sheet):
     results = list(results)
     for key in dict_of_all_addresses:
         dict_of_all_addresses[key].is_working = results[i]
-        dict_of_all_addresses[key].three_last_working_state.insert(0, results[i])
-        dict_of_all_addresses[key].three_last_working_state.pop()
+        if READ_FROM_JSON:
+            dict_of_all_addresses[key].three_last_working_state.insert(0, results[i])
+            dict_of_all_addresses[key].three_last_working_state.pop()
         time = get_date()
         dict_of_all_addresses[key].last_send_time = time
         i += 1
