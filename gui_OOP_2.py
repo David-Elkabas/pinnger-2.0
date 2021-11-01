@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import tkinter.font as tkFont
 import subprocess
 import json
 # import treading
@@ -50,10 +49,9 @@ else:
     read_from_file = xl_file
 
 # measures
-
 FONT_SIZE = setting_data["font_size"]
-WIDTH = 900
-HEIGHT = 840
+WIDTH = 150 * FONT_SIZE
+HEIGHT = 140 * FONT_SIZE
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
 
 right_WIDTH = 400
@@ -68,40 +66,14 @@ TAKASH_FRAME_HEIGHT = 240
 TAKASH_WIDTH = 80
 TAKASH_HEIGHT = 150
 
-# def flickering_color(button, color):
-#     for i in range(0,2):
-#         button.configure(bg=BLACK1)
-#         time.sleep(0.1)
-#         button.configure(bg=GREEN)
-#         time.sleep(0.1)
 
-
-# TODO - add Fonts to EVERYTHING
-class Fonts:
-    def __init__(self):
-        self.customFont_small = tkFont.Font(family="Helvetica", size=8)
-        self.customFont = tkFont.Font(family="Helvetica", size=10)
-        self.customFont_big = tkFont.Font(family="Helvetica", size=12)
-        self.customFont_huge = tkFont.Font(family="Helvetica", size=18)
-
-    def OnBigger(self):
-        '''Make the font 2 points bigger'''
-        size = self.customFont['size']
-        self.customFont.configure(size=size+2)
-
-    def OnSmaller(self):
-        '''Make the font 2 points smaller'''
-        size = self.customFont['size']
-        self.customFont.configure(size=size-2)
-
-
-class Program(tk.Tk, Fonts):
+class Program(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-        Fonts.__init__(self)
+
         self.update_state = 0
-        if MORE_DATA:
+        if MORE_DATA == True:
             w = WIDTH
             h = HEIGHT
         else:
@@ -117,7 +89,7 @@ class Program(tk.Tk, Fonts):
 
         self.create_right_side()
 
-        if MORE_DATA:
+        if MORE_DATA == True:
             self.left_container = tk.Frame(self.main_container, bg=BLACK2, width=right_WIDTH, height=right_HEIGHT)
             self.left_container.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
             self.left_container.pack_propagate(0)
@@ -221,42 +193,35 @@ class Servers_frame(tk.Frame):
         tk.Frame.__init__(self, parent, bg=BLACK2)
 
 
-class Top_title(tk.Frame, Fonts):
+class Top_title(tk.Frame):
     def __init__(self, parent, title, need_buttons):
         tk.Frame.__init__(self, parent, bg=BLACK2)
-        Fonts.__init__(self)
         self.update_state = 0
         self.upper_frame = tk.Frame(self, bg=BLACK2)
         self.upper_frame.pack(fill=tk.X)
 
         if need_buttons == True:
             self.setting_button = tk.Button(self.upper_frame, text=" הגדרות", bg=BLACK1, fg=WHITE,
-                                            font=self.customFont_small, width=10)
-            self.setting_button.bind("<Button>", lambda e : NewWindow(parent))
+                                            font=f'Helvetica {FONT_SIZE +2} bold', width=FONT_SIZE)
+            self.setting_button.bind("<Button>",
+                                     lambda e: NewWindow(parent))
             self.setting_button.grid(row=0, column=0, sticky=tk.W, padx=5)
-
             self.statistics_button = tk.Button(self.upper_frame, text="סטיסטיקה", bg=BLACK1, fg=WHITE,
-                                               font=self.customFont_small, width=10)
+                                               font=f'Helvetica {FONT_SIZE +2} bold', width=FONT_SIZE)
             self.statistics_button.grid(row=1, column=0, sticky=tk.W, padx=5)
 
-            bigger = tk.Button(self.upper_frame, text="+", command=self.OnBigger)
-            bigger.grid(row=0, column=1, sticky=tk.W)
-            smaller = tk.Button(self.upper_frame, text="- ", command=self.OnSmaller)
-            smaller.grid(row=1, column=1, sticky=tk.W)
-
-        self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE, font=self.customFont_huge)
+        self.title_top = tk.Label(self.upper_frame, text=title, bg=BLACK2, fg=WHITE,
+                                  font=f'Helvetica {FONT_SIZE +12} bold')
         self.title_top.grid(row=0, column=1, rowspan=2)
         if need_buttons:
             self.update_state_label = tk.Label(self.upper_frame, text=self.update_state, bg=BLACK2, fg=WHITE,
-                                               font=self.customFont, width=18)
+                                               font=f'Helvetica {FONT_SIZE +4} bold', width=FONT_SIZE+12)
             self.update_state_label.grid(row=0, column=2, rowspan=2)
         self.upper_frame.grid_rowconfigure(1, weight=1)
         self.upper_frame.grid_columnconfigure(1, weight=1)
 
         span = tk.Frame(self, bg=BLACK1, height=2)
         span.pack(fill=tk.X, pady=5, padx=10)
-
-
 
 
 class NewWindow(tk.Toplevel):
@@ -270,28 +235,30 @@ class NewWindow(tk.Toplevel):
         self.minsize(250, 180)
         # set maximum window size value
         self.maxsize(250, 180)
-        padding_left = tk.Label(self.big_frame, font='Helvetica 12 bold', text=" לא עובד בנתיים", bg=BLACK2, fg="red")
+        padding_left = tk.Label(self.big_frame, font=f'Helvetica {FONT_SIZE + 6} bold', text=" לא עובד בנתיים", bg=BLACK2, fg="red")
         padding_left.grid(row=0, column=0, sticky=tk.W)
-        title_label = tk.Label(self.big_frame, bg=BLACK2, font='Helvetica 10 bold',
+        title_label = tk.Label(self.big_frame, bg=BLACK2, font=f'Helvetica {FONT_SIZE + 4} bold',
                                text="אנא בחר את קצב שליחת" + "\n" + "הפינג ואת זמן הסריקה")
         title_label.grid(row=0, column=1, sticky=tk.E, columnspan=2, pady=20)
 
-        entry_ping = tk.Entry(self.big_frame, width=11)
+        entry_ping = tk.Entry(self.big_frame, width=FONT_SIZE+5)
         entry_ping.grid(row=1, column=0, sticky=tk.E)
-        ping_label = tk.Label(self.big_frame, text=":קצב שליחת פינג", width=12, bg=BLACK2, font='Helvetica 10 bold')
+        ping_label = tk.Label(self.big_frame, text=":קצב שליחת פינג", width=FONT_SIZE+6, bg=BLACK2,
+                              font=f'Helvetica {FONT_SIZE + 4} bold')
         ping_label.grid(row=1, column=1, sticky=tk.E, columnspan=2)
 
-        entry_scan = tk.Entry(self.big_frame, width=11)
+        entry_scan = tk.Entry(self.big_frame, width=FONT_SIZE+5)
         entry_scan.grid(row=2, column=0, sticky=tk.E)
-        scan_time_label = tk.Label(self.big_frame, text=":קצב סריקה", font='Helvetica 10 bold', width=12, bg=BLACK2)
+        scan_time_label = tk.Label(self.big_frame, text=":קצב סריקה", font=f'Helvetica {FONT_SIZE + 4} bold',
+                                   width=FONT_SIZE+6, bg=BLACK2)
         scan_time_label.grid(row=2, column=1, sticky=tk.E, columnspan=2)
 
         ok_button = tk.Button(self.big_frame, text="אישור", bg=BLACK1, fg=WHITE,
-                              font='Helvetica 8 bold', width=10)
+                              font=f'Helvetica {FONT_SIZE + 2} bold', width=FONT_SIZE+4)
         ok_button.grid(row=3, column=0, sticky=tk.W, padx=15, pady=20)
 
         cancel_button = tk.Button(self.big_frame, text="ביטול", bg=BLACK1, fg=WHITE,
-                                  font='Helvetica 8 bold', width=10)
+                                  font=f'Helvetica {FONT_SIZE + 2} bold', width=FONT_SIZE+4)
         cancel_button.grid(row=3, column=1, sticky=tk.W, padx=10, pady=20)
 
 
@@ -316,7 +283,7 @@ class ToolTip(object):
         tw.wm_geometry("+%d+%d" % (x, y))
         label = tk.Label(tw, text=self.text, justify=tk.LEFT,
                          background="#ffffe0", relief=tk.SOLID, borderwidth=1,
-                         font=("tahoma", "8", "normal"))
+                         font=("tahoma", f'{FONT_SIZE + 2}', "normal"))
         label.pack(ipadx=1)
 
     def hidetip(self):
@@ -346,7 +313,7 @@ def Create_tool_tip(widget, text, need_delete):
 
 
 def send_one_ping(ip_or_hostname, button, machine):
-    response = send_ping(ip_or_hostname)
+    response = False # send_ping(ip_or_hostname)
     print(f'sent ping to {ip_or_hostname}')
     if not response:
         res = send_ping_with_source_ip(ip_or_hostname, IP_SOURCE_ONE)
@@ -422,14 +389,14 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
         padding_x = 0
         label_wraplength = 30
         label_background = GREY
-        button_font = 'Helvetica 6 bold'
+        button_font = f'Helvetica {FONT_SIZE} bold'
         row_place = 0
         column_place = place
     else:
         padding_x = 5
         label_wraplength = 0
         label_background = BLACK2
-        button_font = 'Helvetica 8 bold'
+        button_font = f'Helvetica {FONT_SIZE + 2} bold'
         row_place = int(place / 3)
         column_place = int(place % 3)
 
@@ -437,7 +404,7 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
     frame.grid(row=row_place, column=column_place, padx=padding_x, pady=2, sticky=tk.N)
 
     name_label = tk.Label(frame, text=title_name, bd=2, bg=label_background, fg=WHITE,
-                          wraplength=label_wraplength, height=2, font='Helvetica 8 bold')
+                          wraplength=label_wraplength, height=2, font=f'Helvetica {FONT_SIZE + 2} bold')
     name_label.grid(row=0, column=0, sticky=tk.NSEW)
     for index, machine in enumerate(array_of_machines):
         if any(machine.three_last_working_state):

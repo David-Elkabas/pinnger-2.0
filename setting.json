@@ -1,8 +1,8 @@
 {
-    "font_size": 3,
+    "font_size": 6,
 
   "ip_source_1": "192.168.19.18",
-  "ip_source_2": "192.168.19.17",
+  "ip_source_2": "192.168.18.17",
 
   "MORE_TAKASHIM": true,
   "read_from_json": true,
