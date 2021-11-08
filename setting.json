@@ -1,15 +1,16 @@
 {
-    "font_size": 6,
-
   "ip_source_1": "192.168.19.18",
   "ip_source_2": "192.168.18.17",
+
+  "font_size": 6,
+  "sound_on": true,
 
   "MORE_TAKASHIM": true,
   "read_from_json": true,
   "xl_file_name": "data.xlsx",
   "json_file_name": "data.json",
 
-  "UPDATE_UI_TIME_PER_AREA_IN_MSEC": 10000,
+  "UPDATE_UI_TIME_PER_AREA_IN_MSEC": 5000,
   "PING_SEND_TIME_IN_MSEC": 250,
 
   "colors": {

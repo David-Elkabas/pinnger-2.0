@@ -9,7 +9,7 @@ import openpyxl
 from Classes import Machine
 from Classes import Takash
 from datetime import datetime
-import winsound
+from winsound import PlaySound, SND_ASYNC
 import time
 
 # Opening JSON file
@@ -27,6 +27,8 @@ RED = setting_data["colors"]["RED"]
 GREEN = setting_data["colors"]["GREEN"]
 WHITE = setting_data["colors"]["WHITE"]
 GREY = setting_data["colors"]["GREY"]
+
+SOUND_ON = setting_data["sound_on"]
 
 '''change MORE_data to True if you wish to add additional data from 'more' sheet'''
 MORE_DATA = setting_data["MORE_TAKASHIM"]
@@ -50,6 +52,7 @@ else:
 
 # measures
 FONT_SIZE = setting_data["font_size"]
+
 WIDTH = 150 * FONT_SIZE
 HEIGHT = 140 * FONT_SIZE
 MAIN_WINDOW_SIZE = str(WIDTH) + 'x' + str(HEIGHT)
@@ -324,9 +327,15 @@ def send_one_ping(ip_or_hostname, button, machine):
                 if READ_FROM_JSON:
                     machine.three_last_working_state.insert(0, False)
                     machine.three_last_working_state.pop()
-                    print(machine.three_last_working_state)
-                color = RED
-                update_GUI(button, color)
+                    if not any(machine.three_last_working_state):
+                        color = RED
+                        update_GUI(button, color)
+                        if SOUND_ON:
+                            PlaySound("SystemHand", SND_ASYNC)
+                else:
+                    color = RED
+                    update_GUI(button, color)
+                    PlaySound("SystemHand", SND_ASYNC)
                 return
     if READ_FROM_JSON:
         machine.three_last_working_state.insert(0, True)
@@ -357,10 +366,10 @@ def send_ping(current_ip_address):
     try:
         output = subprocess.check_output("ping -{} 1 {} -w {}".format('n' if platform.system().lower(
         ) == "windows" else 'c', current_ip_address, SEND_PING_TIME_MSEC), shell=True, universal_newlines=True)
-        if 'unreachable' in output:
-            return False
-        else:
+        if ('bytes' and 'time') in output:
             return True
+        else:
+            return False
     except Exception:
         return False
 
@@ -412,6 +421,8 @@ def add_frame_to_ui(frame_to_add_to, title_name, array_of_machines, place, is_ca
                 background_button_color = GREEN
             else:
                 background_button_color = RED
+                if SOUND_ON:
+                    PlaySound("SystemHand", SND_ASYNC)
         else:
             if machine.is_working == "עובד":
                 background_button_color = GREEN
