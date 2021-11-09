@@ -16,7 +16,7 @@ the user can add and change the end point devices from a xlsx file or Json file 
 
 the application comes with fully functional GUI. written in python with tkinter.
 
-![](https://github.com/David-Elkabas/pinnger-2.0/blob/main/user%20interface.PNG)
+![](https://github.com/David-Elkabas/pinnger-2.0/blob/main/rsz_user_interface.png)
 > example of the ui
 
 
