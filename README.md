@@ -40,9 +40,9 @@ the test the program download the files:
 * Classes.py
 * data.json (or data.xlsx)
 * setting.json
-* gui_OOP_2.py
+* main.py
 
-and run the file gui_OOP_2.py
+and run the file main.py
 
 or dowload the exe file with data.json & setting.json
 
