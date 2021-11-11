@@ -20,7 +20,7 @@ the application comes with fully functional GUI. written in python with tkinter.
 > example of the ui
 
 
-### setting
+### ⚙️ setting
 the user can change all the setting for the program via the setting.json file.
 the setting include:
 * colors of the GUI
@@ -45,4 +45,8 @@ the test the program download the files:
 and run the file main.py
 
 or dowload the exe file with data.json & setting.json
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
 
